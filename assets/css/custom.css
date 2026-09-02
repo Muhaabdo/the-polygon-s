@@ -25,6 +25,58 @@
 /* Smooth in-page scrolling should not hide destination sections under the fixed nav */
 #phs-projects, #phs-developer, #phs-gallery, #phs-contact { scroll-margin-top: 90px; }
 
+/* Hacienda hero: extra tagline/description/stat-pair above the existing pricing pill */
+.phs-hero-tagline {
+  margin-top: 18px;
+  font-family: "El Messiri", sans-serif;
+  font-size: clamp(18px, 2.6vw, 24px);
+  font-weight: 700;
+  color: #E4CE9E;
+}
+.phs-hero-desc {
+  max-width: 640px;
+  margin: 14px auto 0;
+  font-size: clamp(13.5px, 1.8vw, 15.5px);
+  font-weight: 300;
+  line-height: 1.9;
+  color: rgba(246, 243, 236, .85);
+}
+.phs-hero-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 24px;
+}
+.phs-hero-stat { display: flex; flex-direction: column; align-items: center; }
+.phs-hero-stat-num {
+  font-family: "El Messiri", sans-serif;
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 700;
+  color: #C6A15B;
+  direction: ltr;
+}
+.phs-hero-stat-label { margin-top: 4px; font-size: 12px; color: rgba(246, 243, 236, .75); }
+.phs-hero-stat-sep { width: 1px; height: 34px; background: rgba(198, 161, 91, .35); }
+
+/* About-project section: masterplan image + a closing note paragraph, reused on
+   both the "about project" and "amenities" sections. */
+.phd-map {
+  display: block;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto 10px;
+  border-radius: 18px;
+  border: 1px solid rgba(198, 161, 91, .3);
+}
+.phd-note {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 300;
+  color: rgba(246, 243, 236, .7);
+}
+
 /* Hero scroll-down arrow (replaces the old hero CTA button) */
 .phs-scroll-down {
   display: inline-flex;
