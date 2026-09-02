@@ -1,0 +1,7 @@
+# Original SingleFile page captures used as source material for extraction —
+# large one-off dumps, not needed to build or deploy the site.
+*viberealestatre.com*.html
+
+# OS junk
+Thumbs.db
+.DS_Store

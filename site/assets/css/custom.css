@@ -1,0 +1,210 @@
+/* Hand-authored additions on top of the extracted design (not part of the original export). */
+
+/* Sticky nav: hide on scroll down, reveal on scroll up */
+.vnav { transition: transform .35s ease; }
+.vnav.vnav-hidden { transform: translateY(-100%); }
+
+/* Smooth in-page scrolling should not hide destination sections under the fixed nav */
+#phs-projects, #phs-developer, #phs-gallery, #phs-contact { scroll-margin-top: 90px; }
+
+/* Hero scroll-down arrow (replaces the old hero CTA button) */
+.phs-scroll-down {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(198, 161, 91, .16);
+  border: 1px solid rgba(198, 161, 91, .55);
+  color: #E4CE9E;
+  font-size: 18px;
+  text-decoration: none;
+  animation: phs-bounce 2.2s ease-in-out infinite;
+  transition: background .25s ease, color .25s ease;
+}
+.phs-scroll-down:hover { background: #C6A15B; color: #092A21; }
+@keyframes phs-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .phs-scroll-down { animation: none; }
+}
+
+/* Informational banner: compact height on small screens so it never blocks content */
+@media (max-width: 480px) {
+  .vck { padding: 12px 14px; border-radius: 14px; }
+  .vck-icon { width: 30px; height: 30px; font-size: 13px; border-radius: 9px; }
+  .vck-title { font-size: 12.5px; margin-bottom: 2px; }
+  .vck-text { font-size: 10.5px; line-height: 1.5; }
+  .vck-actions { margin-top: 8px; gap: 8px; }
+  .vck-accept { padding: 7px 14px; font-size: 11.5px; }
+  .vck-close { width: 20px; height: 20px; font-size: 11px; top: 8px; }
+}
+
+/* Project names/captions that start with a digit (e.g. "97 Hills") get bidi-reordered
+   to "Hills 97" inside RTL flow unless isolated; unicode-bidi:plaintext auto-detects
+   the run's own direction the same way a <bdi> element would. */
+.phg-caption, .pba-result-name { unicode-bidi: plaintext; }
+
+/* Unit types shown as separate labels instead of one run-on sentence */
+.phs-types { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 14px; }
+.phs-type-badge {
+  display: inline-block;
+  background: rgba(14,59,46,.06);
+  color: var(--phs-emerald, #0E3B2E);
+  border: 1px solid rgba(14,59,46,.16);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-family: "Almarai", sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.phs-type-note {
+  margin: -8px 0 14px;
+  font-size: 11.5px;
+  color: rgba(34,39,31,.55);
+}
+
+/* ---- Budget assistant (pba-*): replaces the old lead-capture form ---- */
+.pba-section {
+  --pba-emerald: #0E3B2E;
+  --pba-emerald-deep: #092A21;
+  --pba-gold: #C6A15B;
+  --pba-gold-soft: #E4CE9E;
+  --pba-ivory: #F6F3EC;
+  direction: rtl;
+  background: var(--pba-ivory);
+  padding: 70px 20px;
+}
+.pba-wrap { max-width: 760px; margin: 0 auto; }
+.pba-header { text-align: center; margin-bottom: 34px; }
+.pba-eyebrow {
+  display: inline-block;
+  font-family: "Almarai", sans-serif;
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  color: var(--pba-gold);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.pba-title {
+  font-family: "Almarai", sans-serif;
+  font-size: clamp(22px, 3.4vw, 30px);
+  font-weight: 800;
+  color: var(--pba-emerald);
+  margin: 0 0 10px;
+}
+.pba-subtitle { color: rgba(34,39,31,.65); font-size: 14.5px; margin: 0; }
+.pba-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 18px 46px rgba(14,59,46,.1);
+  padding: 30px;
+}
+.pba-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.pba-field { display: flex; flex-direction: column; gap: 8px; }
+.pba-field label {
+  font-family: "Almarai", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pba-emerald);
+}
+.pba-field input {
+  border: 1px solid rgba(14,59,46,.2);
+  border-radius: 12px;
+  padding: 13px 14px;
+  font-family: "Almarai", sans-serif;
+  font-size: 14px;
+  color: var(--pba-emerald-deep);
+  background: var(--pba-ivory);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.pba-field input:focus {
+  outline: none;
+  border-color: var(--pba-gold);
+  box-shadow: 0 0 0 3px rgba(198,161,91,.2);
+}
+.pba-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--pba-emerald);
+  color: var(--pba-gold-soft);
+  font-family: "Almarai", sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  padding: 15px;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background .25s ease, transform .2s ease;
+}
+.pba-btn:hover { background: var(--pba-emerald-deep); transform: translateY(-2px); }
+.pba-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.pba-btn:disabled:hover { background: var(--pba-emerald); transform: none; }
+.pba-result {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px dashed rgba(14,59,46,.18);
+  text-align: center;
+}
+.pba-result-label {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--pba-gold);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 6px;
+}
+.pba-result-name {
+  font-family: "Almarai", sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--pba-emerald);
+  margin-bottom: 4px;
+}
+.pba-result-meta { color: rgba(34,39,31,.65); font-size: 13.5px; margin-bottom: 16px; }
+.pba-result-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--pba-gold);
+  color: var(--pba-emerald-deep);
+  font-family: "Almarai", sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 12px 26px;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: transform .2s ease;
+}
+.pba-result-wa:hover { transform: translateY(-2px); }
+.pba-another {
+  display: block;
+  margin: 14px auto 0;
+  background: none;
+  border: none;
+  color: var(--pba-emerald);
+  font-family: "Almarai", sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px;
+}
+.pba-another:hover { color: var(--pba-gold); }
+
+@media (max-width: 700px) {
+  .pba-fields { grid-template-columns: 1fr; }
+  .pba-card { padding: 22px; }
+}
