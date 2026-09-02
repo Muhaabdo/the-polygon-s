@@ -2,6 +2,10 @@
 # large one-off dumps, not needed to build or deploy the site.
 *viberealestatre.com*.html
 
+# Build pipeline (source-extraction scripts + intermediate files) — kept locally only.
+# The deployed site is the repo root; this never needs to ship with it.
+/build_tmp/
+
 # OS junk
 Thumbs.db
 .DS_Store
