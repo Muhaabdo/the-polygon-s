@@ -1,0 +1,22 @@
+# Serve every page without its .html extension (e.g. /about-us instead of
+# /about-us.html), and send anyone who still hits the .html URL directly
+# (old links, browser history, search engines) to the clean version instead
+# of serving duplicate content at two URLs.
+
+RewriteEngine On
+
+# If the request already resolves to a real file or directory, leave it alone
+# (assets, images, this file itself, etc.).
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# /page.html -> /page (visible redirect, so links/bookmarks update)
+RewriteCond %{THE_REQUEST} \s/+([^?\s]+)\.html[\s?] [NC]
+RewriteRule ^ /%1 [R=301,L,NE]
+
+# /page -> serve page.html (internal rewrite, URL bar keeps the clean form)
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^.]+)$ $1.html [L]
+
+# Custom 404 fallback (optional) could go here.
