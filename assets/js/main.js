@@ -9,10 +9,12 @@
   // ---- Mobile nav (burger) ----
   var burger = document.getElementById('vnavBurger');
   var links = document.getElementById('vnavLinks');
+  var burgerIcon = document.getElementById('vnavBurgerIcon');
   function closeMenu() {
     if (!links || !burger) return;
     links.style.maxHeight = '0px';
     burger.setAttribute('aria-expanded', 'false');
+    if (burgerIcon) burgerIcon.className = 'fa-solid fa-bars';
   }
   if (burger && links) {
     burger.addEventListener('click', function () {
@@ -22,6 +24,7 @@
       } else {
         links.style.maxHeight = links.scrollHeight + 'px';
         burger.setAttribute('aria-expanded', 'true');
+        if (burgerIcon) burgerIcon.className = 'fa-solid fa-xmark';
       }
     });
     links.querySelectorAll('a').forEach(function (a) {

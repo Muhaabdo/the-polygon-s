@@ -4,6 +4,24 @@
 .vnav { transition: transform .35s ease; }
 .vnav.vnav-hidden { transform: translateY(-100%); }
 
+/* The hamburger button ships with no bars at all (the original site drew them with
+   runtime JS this static export doesn't have) — a plain white icon is the simplest
+   reliably-visible fix. */
+.vnav-burger i { color: #fff; font-size: 19px; }
+
+/* Desktop nav: the source's own sizing is too large for the full link set at common
+   laptop widths, so the row wraps to two lines. Tighten it up above the site's own
+   mobile breakpoint (991px) only — the mobile stacked menu is untouched. */
+@media (min-width: 992px) {
+  .vnav-inner { height: 56px; gap: 10px; }
+  .vnav-logo strong { font-size: 18px; }
+  .vnav-logo small { font-size: 8.5px; letter-spacing: 2.5px; }
+  .vnav-links { gap: 0; }
+  .vnav-links a { font-size: 12.5px; padding: 6px 10px; white-space: nowrap; }
+  .vnav-links a.vnav-sec { font-size: 11px; padding: 6px 8px; }
+  .vnav-cta { font-size: 12.5px; padding: 7px 16px; }
+}
+
 /* Smooth in-page scrolling should not hide destination sections under the fixed nav */
 #phs-projects, #phs-developer, #phs-gallery, #phs-contact { scroll-margin-top: 90px; }
 
