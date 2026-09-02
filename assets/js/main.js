@@ -140,9 +140,15 @@
         var img = slide.querySelector('img');
         if (!img) return;
         slide.addEventListener('click', function () {
+          // currentSrc is empty until the browser has actually resolved/loaded the
+          // image, which a lazy-loaded slide that hasn't scrolled into view yet
+          // (common on a narrow mobile viewport, where slides sit further apart)
+          // may not have done yet even though it's already tappable — src is always
+          // set from the markup, so fall back to it.
+          var fullSrc = img.currentSrc || img.src;
           lightbox.innerHTML =
             '<button class="phg-lightbox-close" aria-label="إغلاق" style="position:absolute;top:20px;inset-inline-end:24px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;z-index:2">&times;</button>' +
-            '<img src="' + img.currentSrc + '" alt="' + (img.alt || '') + '" style="max-width:92vw;max-height:88vh;object-fit:contain;border-radius:12px">';
+            '<img src="' + fullSrc + '" alt="' + (img.alt || '') + '" style="max-width:92vw;max-height:88vh;object-fit:contain;border-radius:12px">';
           lightbox.classList.remove('sf-hidden');
           lightbox.style.cssText += ';position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(9,42,33,.92)';
           lightbox.querySelector('.phg-lightbox-close').addEventListener('click', closeLightbox);
