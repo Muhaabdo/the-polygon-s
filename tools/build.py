@@ -19,7 +19,7 @@ from site_data import SITE, PROJECTS, T  # noqa: E402
 from pages_data import ABOUT, PRIVACY, PRIVACY_EMAIL, MISC  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010k"
+ASSET_V = "20261010m"
 
 
 def ic(name):
@@ -292,7 +292,9 @@ def project_page(slug, lang):
     cfg = {
         "lang": lang, "project": p["name"], "projectName": title, "endpoint": SITE["endpoint"],
         "thankYou": url("thank-you", lang),
-        "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"]},
+        "wa": SITE["wa"],
+           "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"],
+                 "waMsg": t["wa_msg"], "waMsgGeneric": t["wa_msg_generic"]},
     }
     nav_links = "".join(f'<a href="{h}">{esc(x)}</a>' for h, x in t["nav"] if has_gallery or h != "#gallery")
     disc = p["discount"]
@@ -490,7 +492,9 @@ def home_page(lang):
     hero_img = img("palm-parks", "hero")
     cfg = {"lang": lang, "project": "", "projectName": SITE["brand"], "pickProject": True, "backTitle": t["home_back"],
            "endpoint": SITE["endpoint"], "thankYou": url("thank-you", lang),
-           "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"]}}
+           "wa": SITE["wa"],
+           "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"],
+                 "waMsg": t["wa_msg"], "waMsgGeneric": t["wa_msg_generic"]}}
     nav_links = "".join(f'<a href="{h}">{esc(x)}</a>' for h, x in t["home_nav"])
     stats = "".join(f'<div class="hero-stat"><b>{esc(v)}</b><span>{esc(k)}</span></div>' for v, k in t["home_stats"])
     arrow = ic("arrow-l" if t["dir"] == "rtl" else "arrow-r")
@@ -631,7 +635,9 @@ def simple_shell(lang, t, slug, title, desc, body, robots="max-image-preview:lar
     alts = [("ar", url(slug, "ar", True)), ("en", url(slug, "en", True)), ("x-default", url(slug, "ar", True))] if alternates else []
     cfg = {"lang": lang, "project": "", "projectName": SITE["brand"], "pickProject": True, "backTitle": t["home_back"],
            "endpoint": SITE["endpoint"], "thankYou": url("thank-you", lang),
-           "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"]}}
+           "wa": SITE["wa"],
+           "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"],
+                 "waMsg": t["wa_msg"], "waMsgGeneric": t["wa_msg_generic"]}}
     nav_links = "".join(f'<a href="{h}">{esc(x)}</a>' for h, x in m["nav"])
     html = head(title, desc, url(slug, lang, True), alts, lang, t, robots=robots, ld=ld)
     html += f'''{lang_bar(slug, lang, t) if alternates else ""}
@@ -769,7 +775,7 @@ def thank_you(lang):
     alternates = [("ar", url("thank-you", "ar", True)), ("en", url("thank-you", "en", True))]
     cfg = {"lang": lang, "wa": SITE["wa"], "t": {
         "waMsg": t["wa_msg"], "waMsgGeneric": t["wa_msg_generic"], "backTo": t["ty_back"],
-        "redirecting": t["ty_redirecting"], "notOpened": t["ty_not_opened"],
+        "redirecting": t["ty_redirecting"], "notOpened": t["ty_not_opened"], "openedNewTab": t["ty_new_tab"],
         "titleGeneric": t["ty_title_generic"], "textGeneric": t["ty_text_generic"], "titleProject": t["ty_title_p"]}}
     html = head(t["ty_seo_title"], t["ty_text_generic"], url("thank-you", lang, True), alternates, lang, t,
                 robots="noindex, nofollow")

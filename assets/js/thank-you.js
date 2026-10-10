@@ -42,6 +42,7 @@
 
   if (!lead.confirmed) { lead.confirmed = true; save(); push("thank_you_view"); }
 
+  if (lead.newTab) { count.textContent = T.openedNewTab || ""; btn.target = "_blank"; }
   if (!lead.redirected) {
     count.textContent = T.redirecting || "";
     bar.querySelector("i").style.transitionDuration = REDIRECT_MS + "ms";
@@ -56,4 +57,5 @@
   } else {
     bar.hidden = true;
   }
+  if (window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches) btn.target = "_blank";
 })();
