@@ -19,7 +19,7 @@ from site_data import SITE, PROJECTS, T  # noqa: E402
 from pages_data import ABOUT, PRIVACY, PRIVACY_EMAIL, MISC  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010p"
+ASSET_V = "20261010q"
 
 
 def ic(name):
