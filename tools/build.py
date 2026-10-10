@@ -19,7 +19,7 @@ from site_data import SITE, PROJECTS, T  # noqa: E402
 from pages_data import ABOUT, PRIVACY, PRIVACY_EMAIL, MISC  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261011a"
+ASSET_V = "20261011b"
 
 
 def ic(name):
@@ -74,9 +74,17 @@ def gtm_body():
             "<!-- End Google Tag Manager (noscript) -->")
 
 
-def lang_bar(slug, lang, t):
+def lang_toggle(slug, lang):
+    """Compact language switch shown inside the nav bar on phones (the top bar is hidden there)."""
+    other = "en" if lang == "ar" else "ar"
+    label = "English" if other == "en" else "العربية"
+    return (f'<a class="nav-lang" href="{url(slug, other)}" lang="{other}" hreflang="{other}" aria-label="{label}">'
+            f'{ic("globe")}<span>{"EN" if other == "en" else "عربي"}</span></a>')
+
+
+def lang_bar(slug, lang, t, keep=False):
     cur = ' aria-current="true"'
-    return f'''<div class="lang">
+    return f'''<div class="lang{" lang-keep" if keep else ""}">
  <div class="wrap">
   <nav class="lang-switch" aria-label="Language">
    <a href="{url(slug, "ar")}" lang="ar" hreflang="ar"{cur if lang == "ar" else ""}>العربية</a>
@@ -433,6 +441,7 @@ def project_page(slug, lang):
   <a class="logo" href="{url("", lang)}" aria-label="VIBE Real Estate"><strong>VIBE <span>Real Estate</span></strong><small>Luxury Properties</small></a>
   <nav class="nav-links" aria-label="{esc(t["menu"])}">{nav_links}</nav>
   <button class="btn btn-cta" type="button" data-cta="nav">{ic("whatsapp")} {esc(t["nav_cta"])}</button>
+  {lang_toggle(slug, lang)}
   <button class="nav-burger" type="button" aria-label="{esc(t["menu"])}" aria-expanded="false">{ic("bars")}</button>
  </div>
 </header>
@@ -614,6 +623,7 @@ def home_page(lang):
   <a class="logo" href="{url("", lang)}" aria-label="VIBE Real Estate"><strong>VIBE <span>Real Estate</span></strong><small>Luxury Properties</small></a>
   <nav class="nav-links" aria-label="{esc(t["menu"])}">{nav_links}</nav>
   <button class="btn btn-cta" type="button" data-cta="nav">{ic("whatsapp")} {esc(t["home_nav_cta"])}</button>
+  {lang_toggle("", lang)}
   <button class="nav-burger" type="button" aria-label="{esc(t["menu"])}" aria-expanded="false">{ic("bars")}</button>
  </div>
 </header>
@@ -723,6 +733,7 @@ def simple_shell(lang, t, slug, title, desc, body, robots="max-image-preview:lar
   <a class="logo" href="{url("", lang)}" aria-label="VIBE Real Estate"><strong>VIBE <span>Real Estate</span></strong><small>Luxury Properties</small></a>
   <nav class="nav-links" aria-label="{esc(t["menu"])}">{nav_links}</nav>
   <button class="btn btn-cta" type="button" data-cta="nav">{ic("whatsapp")} {esc(t["home_nav_cta"])}</button>
+  {lang_toggle(slug, lang) if alternates else ""}
   <button class="nav-burger" type="button" aria-label="{esc(t["menu"])}" aria-expanded="false">{ic("bars")}</button>
  </div>
 </header>
@@ -856,7 +867,7 @@ def thank_you(lang):
         "titleGeneric": t["ty_title_generic"], "textGeneric": t["ty_text_generic"], "titleProject": t["ty_title_p"]}}
     html = head(t["ty_seo_title"], t["ty_text_generic"], url("thank-you", lang, True), alternates, lang, t,
                 robots="noindex, nofollow")
-    html += f'''{lang_bar("thank-you", lang, t)}
+    html += f'''{lang_bar("thank-you", lang, t, keep=True)}
 <main class="ty">
  <div class="ty-box">
   <div class="ty-ok">{ic("check")}</div>
