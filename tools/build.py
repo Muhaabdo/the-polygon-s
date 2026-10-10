@@ -18,7 +18,7 @@ sys.path.insert(0, HERE)
 from site_data import SITE, PROJECTS, T  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010d"
+ASSET_V = "20261010e"
 
 
 def ic(name):
@@ -37,7 +37,7 @@ def price_html(n, t):
 def url(slug, lang, absolute=False):
     path = ("/en/" if lang == "en" else "/") + slug
     if slug == "":
-        path = "/"  # no English home page yet
+        path = "/en/" if lang == "en" else "/"
     return (SITE["domain"] + path) if absolute else path
 
 
@@ -155,11 +155,17 @@ def cookie(t):
 
 
 def lead_form(p, t, loc, inline=False, uid="m"):
-    opts = "".join(f'<option value="{esc(u["name"])}">{esc(u["name"])}</option>' for u in p["units"])
-    if p.get("launch"):
-        L = p["launch"]
-        opts += f'<optgroup label="{esc(L["name"])}">' + "".join(
-            f'<option value="{esc(L["name"])} - {esc(u["name"])}">{esc(u["name"])}</option>' for u in L["units"]) + "</optgroup>"
+    """`p` is a project dict, or None on the home page where the select picks the project."""
+    lab = {"l": t["f_unit"], "ph": t["f_unit_ph"], "err": t["f_unit_err"]}
+    if p is None:
+        lab = {"l": t["f_project"], "ph": t["f_project_ph"], "err": t["f_project_err"]}
+        opts = "".join(f'<option value="{esc(o["name"])}">{esc(o["title"])}</option>' for o in PROJECTS.values() if o.get("ready"))
+    else:
+        opts = "".join(f'<option value="{esc(u["name"])}">{esc(u["name"])}</option>' for u in p["units"])
+        if p.get("launch"):
+            L = p["launch"]
+            opts += f'<optgroup label="{esc(L["name"])}">' + "".join(
+                f'<option value="{esc(L["name"])} - {esc(u["name"])}">{esc(u["name"])}</option>' for u in L["units"]) + "</optgroup>"
     return f'''<form class="lf" novalidate data-loc="{loc}"{" data-inline" if inline else ""}>
  <div class="lf-f">
   <label for="{uid}-name">{esc(t["f_name"])}</label>
@@ -181,12 +187,12 @@ def lead_form(p, t, loc, inline=False, uid="m"):
   <div class="lf-err">{esc(t["f_phone_err"])}</div>
  </div>
  <div class="lf-f">
-  <label for="{uid}-unit">{esc(t["f_unit"])}</label>
+  <label for="{uid}-unit">{esc(lab["l"])}</label>
   <select id="{uid}-unit" name="unit">
-   <option value="">{esc(t["f_unit_ph"])}</option>{opts}
+   <option value="">{esc(lab["ph"])}</option>{opts}
    <option value="Not sure">{esc(t["f_unit_any"])}</option>
   </select>
-  <div class="lf-err">{esc(t["f_unit_err"])}</div>
+  <div class="lf-err">{esc(lab["err"])}</div>
  </div>
  <input class="lf-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
  <button class="btn lf-submit" type="submit">{ic("whatsapp")}<span>{esc(t["f_submit"])}</span></button>
@@ -477,6 +483,129 @@ def project_page(slug, lang):
     return html
 
 
+def home_page(lang):
+    t = T[lang]
+    alternates = [("ar", url("", "ar", True)), ("en", url("", "en", True)), ("x-default", url("", "ar", True))]
+    hero_img = img("palm-parks", "hero")
+    cfg = {"lang": lang, "project": "", "projectName": SITE["brand"], "pickProject": True, "backTitle": t["home_back"],
+           "endpoint": SITE["endpoint"], "thankYou": url("thank-you", lang),
+           "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"]}}
+    nav_links = "".join(f'<a href="{h}">{esc(x)}</a>' for h, x in t["home_nav"])
+    stats = "".join(f'<div class="hero-stat"><b>{esc(v)}</b><span>{esc(k)}</span></div>' for v, k in t["home_stats"])
+    arrow = ic("arrow-l" if t["dir"] == "rtl" else "arrow-r")
+    more = "".join(f'''<a class="card" href="{m["href"]}" data-track="project_switch" data-loc="home_more" data-target="{esc(m["title"])}">
+    <div class="card-media"><img src="{img("home", m["img"])}" alt="{esc(m["title"])}" loading="lazy" style="width:100%;height:100%;object-fit:cover"><span class="card-tag">{ic("pin")} {esc(m["tag"])}</span></div>
+    <div class="card-body"><h3 class="card-name">{esc(m["title"])}</h3><p class="card-sub" style="margin:6px 0 14px">{esc(m["text"])}</p>
+     <span class="card-more" style="margin-top:auto">{esc(t["home_explore"])} {arrow}</span></div>
+   </a>''' for m in t["home_more"])
+    vibe = "".join(f'<div class="vibe"><b>{l}</b><h3>{esc(n)}</h3><p>{esc(d)}</p></div>' for l, n, d in t["home_vibe"])
+    about_ps = "".join(f"<p>{esc(x)}</p>" for x in t["home_about"])
+    items = [{"@type": "ListItem", "position": i + 1, "name": o["title"], "url": url(s, lang, True)}
+             for i, (s, o) in enumerate(PROJECTS.items()) if o.get("ready")]
+    org = SITE["domain"] + "/#organization"
+    ld = json.dumps({"@context": "https://schema.org", "@graph": [
+        {"@type": "RealEstateAgent", "@id": org, "name": SITE["brand"], "url": SITE["domain"] + "/", "telephone": SITE["tel_intl"],
+         "image": SITE["domain"] + hero_img, "address": {"@type": "PostalAddress", "addressLocality": "Cairo", "addressCountry": "EG"}},
+        {"@type": "WebSite", "@id": SITE["domain"] + "/#website", "url": SITE["domain"] + "/", "name": SITE["brand"], "inLanguage": ["ar", "en"], "publisher": {"@id": org}},
+        {"@type": "ItemList", "name": t["home_h1"], "itemListElement": items}]}, ensure_ascii=False, indent=1)
+    html = head(t["home_seo_title"], t["home_seo_desc"], url("", lang, True), alternates, lang, t,
+                og_img=SITE["domain"] + hero_img, preload=hero_img, ld=ld)
+    html += f'''{lang_bar("", lang, t)}
+<header class="nav">
+ <div class="wrap">
+  <a class="logo" href="{url("", lang)}" aria-label="VIBE Real Estate"><strong>VIBE <span>Real Estate</span></strong><small>Luxury Properties</small></a>
+  <nav class="nav-links" aria-label="{esc(t["menu"])}">{nav_links}</nav>
+  <button class="btn btn-cta" type="button" data-cta="nav">{ic("whatsapp")} {esc(t["nav_cta"])}</button>
+  <button class="nav-burger" type="button" aria-label="{esc(t["menu"])}" aria-expanded="false">{ic("bars")}</button>
+ </div>
+</header>
+
+<main>
+<section class="hero">
+ <img class="hero-bg" src="{hero_img}" alt="Palm Hills" fetchpriority="high">
+ <div class="hero-in">
+  <div class="eyebrow">{esc(t["home_eyebrow"])}</div>
+  <h1 class="hero-h1-ar">{esc(t["home_h1"])}</h1>
+  <p class="hero-sub">{esc(t["home_sub"])}</p>
+  <div class="hero-stats">{stats}</div>
+  <div class="hero-btns">
+   <a class="btn btn-cta btn-lg" href="#projects">{esc(t["home_cta2"])}</a>
+   <button class="btn btn-ghost" type="button" data-cta="hero">{ic("whatsapp")} {esc(t["cta_main"])}</button>
+  </div>
+ </div>
+</section>
+
+<section class="sec" id="projects">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(t["home_proj_eyebrow"])}</div><h2>{esc(t["home_proj_h"])}</h2><p>{esc(t["home_proj_p"])}</p></div>
+  <div class="cards cards-3 others">
+   {other_cards(None, lang, t)}
+  </div>
+  <p class="disclaimer">{ic("info")}<span>{esc(t["units_disc"])}</span></p>
+ </div>
+</section>
+
+<section class="sec sec-white" id="more">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(t["home_more_eyebrow"])}</div><h2>{esc(t["home_more_h"])}</h2><p>{esc(t["home_more_p"])}</p></div>
+  <div class="cards cards-2 others">{more}</div>
+ </div>
+</section>
+
+<section class="sec sec-dark" id="about">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(t["home_about_eyebrow"])}</div><h2>{esc(t["home_about_h"])}</h2></div>
+  <div class="home-about">{about_ps}</div>
+  <div class="vibes">{vibe}</div>
+  <p style="text-align:center;margin-top:26px"><a class="btn btn-ghost" href="/about-us">{esc(t["home_about_link"])} {arrow}</a></p>
+ </div>
+</section>
+
+<section class="sec" id="contact" style="background:linear-gradient(160deg,var(--em-deep),var(--em))">
+ <div class="wrap">
+  <div class="final">
+   <div>
+    <div class="eyebrow">VIBE Real Estate</div>
+    <h2>{t["home_final_h"]}</h2>
+    <p class="final-lead">{esc(t["home_final_lead"])}</p>
+    <ul class="final-points">{"".join(f"<li>{ic('check')} {esc(x)}</li>" for x in t["final_points"])}</ul>
+    <a class="final-call" href="tel:{SITE["tel"]}" data-track="call_click" data-loc="final">{ic("phone")} {esc(t["final_call"])}<span class="ltr">{SITE["tel"]}</span></a>
+   </div>
+   <div class="final-card">
+    <h3>{esc(t["final_form_h"])}</h3>
+    {lead_form(None, t, "final_form", inline=True, uid="f")}
+   </div>
+  </div>
+ </div>
+</section>
+</main>
+
+{footer(lang, t)}
+
+<div class="modal" id="leadModal" role="dialog" aria-modal="true" aria-labelledby="leadTitle">
+ <div class="modal-box">
+  <button class="modal-x" type="button" data-modal-close aria-label="{esc(t["close"])}">{ic("x")}</button>
+  <div class="modal-head">
+   <div class="modal-wa">{ic("whatsapp")}</div>
+   <h2 id="leadTitle">{esc(t["f_title"])}</h2>
+   <p>{esc(t["f_sub"])}</p>
+   <span class="modal-ctx"></span>
+  </div>
+  <div class="modal-body">{lead_form(None, t, "modal", uid="m")}</div>
+ </div>
+</div>
+
+{cookie(t)}
+
+<script>window.VIBE={json.dumps(cfg, ensure_ascii=False)};</script>
+<script src="/assets/js/countries.js?v={ASSET_V}" defer></script>
+<script src="/assets/js/project.js?v={ASSET_V}" defer></script>
+</body>
+</html>
+'''
+    return html
+
+
 def thank_you(lang):
     t = T[lang]
     alternates = [("ar", url("thank-you", "ar", True)), ("en", url("thank-you", "en", True))]
@@ -521,7 +650,10 @@ def sitemap():
     today = datetime.date.today().isoformat()
     out = ['<?xml version="1.0" encoding="UTF-8"?>',
            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
-    for path in ["/", "/palm-hills-projects-west", "/palm-hills-projects-east", "/hacienda-ras-al-hekma", "/about-us", "/privacy-policy"]:
+    home_alts = "".join(f'<xhtml:link rel="alternate" hreflang="{h}" href="{url("", l, True)}"/>' for h, l in (("ar", "ar"), ("en", "en"), ("x-default", "ar")))
+    for l in LANGS:
+        out.append(f"  <url><loc>{url('', l, True)}</loc><lastmod>{today}</lastmod>{home_alts}</url>")
+    for path in ["/palm-hills-projects-west", "/palm-hills-projects-east", "/hacienda-ras-al-hekma", "/about-us", "/privacy-policy"]:
         out.append(f"  <url><loc>{SITE['domain']}{path}</loc></url>")
     for slug, p in PROJECTS.items():
         if not p.get("ready"):
@@ -545,6 +677,7 @@ def main():
             write((f"en/{slug}.html" if lang == "en" else f"{slug}.html"), project_page(slug, lang))
     for lang in LANGS:
         write("en/thank-you.html" if lang == "en" else "thank-you.html", thank_you(lang))
+        write("en/index.html" if lang == "en" else "index.html", home_page(lang))
 
 
 if __name__ == "__main__":

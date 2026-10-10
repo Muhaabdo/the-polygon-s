@@ -15,7 +15,7 @@
   function save() { try { sessionStorage.setItem("vibe_lead", JSON.stringify(lead)); } catch (e) {} }
 
   var label = lead ? (lead.project + (lead.unit ? " · " + lead.unit : "")) : "";
-  var msg = lead ? (T.waMsg || "").replace("{p}", lead.project).replace("{u}", lead.unit ? " (" + lead.unit + ")" : "") : (T.waMsgGeneric || "");
+  var msg = lead && lead.project ? (T.waMsg || "").replace("{p}", lead.project).replace("{u}", lead.unit ? " (" + lead.unit + ")" : "") : (T.waMsgGeneric || "");
   var waUrl = "https://wa.me/" + CFG.wa + "?text=" + encodeURIComponent(msg);
 
   var btn = $("#tyWa"), back = $("#tyBack"), ctx = $("#tyCtx"), count = $("#tyCount"), bar = $("#tyBar");

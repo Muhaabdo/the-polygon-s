@@ -290,21 +290,23 @@
 
       form._sending = true; submit.disabled = true; $("span", submit).textContent = T.sending || "…";
       var a = readAttr();
+      var project = CFG.project || "";
+      if (CFG.pickProject) { project = unit === "Not sure" ? "" : unit; unit = ""; }   /* home page: the select chooses the project */
       var lead = {
-        name: name, phone: ph.e164, country: ph.country.iso, project: CFG.project || "", unit: unit,
+        name: name, phone: ph.e164, country: ph.country.iso, project: project, unit: unit,
         page: location.origin + location.pathname, lang: LANG, cta: loc,
         gclid: a.gclid || "", gbraid: a.gbraid || "", wbraid: a.wbraid || "",
         utm_source: a.utm_source || "", utm_medium: a.utm_medium || "", utm_campaign: a.utm_campaign || "",
         utm_term: a.utm_term || "", utm_content: a.utm_content || "",
         landing: a.landing || "", referrer: a.referrer || ""
       };
-      track("generate_lead", { form_location: loc, unit_type: unit, phone_country: ph.country.iso });
+      track("generate_lead", { form_location: loc, unit_type: unit, phone_country: ph.country.iso, project: project });
 
       function done() {
         try {
           sessionStorage.setItem("vibe_lead", JSON.stringify({
-            project: CFG.project || "", unit: unit, lang: LANG, cta: loc,
-            back: location.pathname + location.search, backTitle: CFG.project || "", ts: Date.now()
+            project: project, unit: unit, lang: LANG, cta: loc,
+            back: location.pathname + location.search, backTitle: CFG.backTitle || project, ts: Date.now()
           }));
         } catch (err) {}
         location.href = CFG.thankYou || "/thank-you";
