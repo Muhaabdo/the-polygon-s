@@ -35,11 +35,11 @@ PROJECTS = {
         },
         "seo": {
             "ar": {
-                "title": "PX بالم هيلز أكتوبر | أسعار وخطط سداد PX Compound 2026 – VIBE Real Estate",
+                "title": "PX بالم هيلز أكتوبر | أسعار وخطط سداد PX Compound 2026",
                 "desc": "كمبوند PX من بالم هيلز في أكتوبر: شقق وتاون هاوس بمقدم 5% وتقسيط حتى 10 سنوات، وخصم يصل إلى 40%. الأسعار تبدأ من 13,144,000 جنيه. اعرف الوحدات المتاحة الآن.",
             },
             "en": {
-                "title": "PX Palm Hills October | PX Compound Prices & Payment Plans 2026 – VIBE Real Estate",
+                "title": "PX Compound Palm Hills October | Prices & Payment Plans 2026",
                 "desc": "PX by Palm Hills in 6th of October: apartments and town houses with 5% down payment, up to 10 years installments and up to 40% discount. Prices from EGP 13,144,000.",
             },
         },
@@ -145,9 +145,9 @@ PROJECTS = {
             "en": "Apartments in a quiet boutique community off the Dahshur Link — by Palm Hills Developments",
         },
         "seo": {
-            "ar": {"title": "Palm Parks بالم هيلز أكتوبر | أسعار شقق بالم باركس 2026 – VIBE Real Estate",
+            "ar": {"title": "Palm Parks بالم هيلز أكتوبر | أسعار شقق بالم باركس 2026",
                    "desc": "شقق Palm Parks من بالم هيلز في أكتوبر عند وصلة دهشور: مقدم 5% وتقسيط حتى 8 سنوات، والأسعار تبدأ من 17,807,000 جنيه. اعرف الوحدات المتاحة الآن."},
-            "en": {"title": "Palm Parks Palm Hills October | Apartment Prices & Payment Plans 2026 – VIBE Real Estate",
+            "en": {"title": "Palm Parks October | Apartment Prices & Payment Plans 2026",
                    "desc": "Palm Parks by Palm Hills in 6th of October, off the Dahshur Link: apartments with 5% down payment and up to 8 years installments. Prices from EGP 17,807,000."},
         },
         "about": {
@@ -207,9 +207,9 @@ PROJECTS = {
             "en": "Family homes and twin houses in the extension of The Crown, at the heart of Palm Hills October",
         },
         "seo": {
-            "ar": {"title": "Crown Extension بالم هيلز أكتوبر | أسعار ذا كراون 2026 – VIBE Real Estate",
+            "ar": {"title": "Crown Extension بالم هيلز أكتوبر | أسعار ذا كراون 2026",
                    "desc": "The Crown Extension من بالم هيلز في أكتوبر: Family Homes وتوين هاوس بمقدم 5% وتقسيط حتى 8 سنوات، وخصم يصل إلى 30%. الأسعار تبدأ من 30,521,000 جنيه."},
-            "en": {"title": "Crown Extension Palm Hills October | Prices & Payment Plans 2026 – VIBE Real Estate",
+            "en": {"title": "Crown Extension Palm Hills | Prices & Payment Plans 2026",
                    "desc": "The Crown Extension by Palm Hills in 6th of October: family homes and twin houses with 5% down payment, up to 8 years installments and up to 30% discount. From EGP 30,521,000."},
         },
         "about": {
@@ -269,9 +269,9 @@ PROJECTS = {
             "en": "Villas, twin houses and town houses at The Hill — a villas-only community by Palm Hills Developments",
         },
         "seo": {
-            "ar": {"title": "Palm Hills One أكتوبر | أسعار فيلات بالم هيلز وان 2026 – VIBE Real Estate",
+            "ar": {"title": "Palm Hills One أكتوبر | أسعار فيلات بالم هيلز وان 2026",
                    "desc": "Palm Hills One من بالم هيلز في غرب القاهرة: فيلات وتوين هاوس وتاون هاوس بمقدم 5% وتقسيط حتى 8 سنوات. الأسعار تبدأ من 47,549,000 جنيه. اعرف الوحدات المتاحة."},
-            "en": {"title": "Palm Hills One October | Villa Prices & Payment Plans 2026 – VIBE Real Estate",
+            "en": {"title": "Palm Hills One October | Villa Prices & Payment Plans 2026",
                    "desc": "Palm Hills One by Palm Hills in West Cairo: villas, twin houses and town houses with 5% down payment and up to 8 years installments. Prices from EGP 47,549,000."},
         },
         "about": {
@@ -327,9 +327,9 @@ PROJECTS = {
             "en": "Family homes and town houses on the 26th of July Axis — the third phase of Bamboo by Palm Hills",
         },
         "seo": {
-            "ar": {"title": "Bamboo III بالم هيلز أكتوبر | أسعار بامبو 3 وخطط السداد 2026 – VIBE Real Estate",
+            "ar": {"title": "Bamboo III بالم هيلز أكتوبر | أسعار بامبو 3 وخطط السداد 2026",
                    "desc": "Bamboo III من بالم هيلز في أكتوبر على محور 26 يوليو: Family Homes وتاون هاوس بمقدم 5% وتقسيط حتى 10 سنوات. الأسعار تبدأ من 27,457,000 جنيه."},
-            "en": {"title": "Bamboo III Palm Hills October | Prices & Payment Plans 2026 – VIBE Real Estate",
+            "en": {"title": "Bamboo III Palm Hills | Prices & Payment Plans 2026",
                    "desc": "Bamboo III by Palm Hills in 6th of October on the 26th of July Axis: family homes and town houses with 5% down payment and up to 10 years installments. From EGP 27,457,000."},
         },
         "about": {
@@ -428,7 +428,7 @@ T = {
         "ft_rights": "جميع الحقوق محفوظة", "ft_about": "About Us", "ft_priv": "سياسة الخصوصية",
         "crumb_home": "الرئيسية",
         "home_seo_title": "VIBE Real Estate | وسيط عقاري مستقل في مصر",
-        "home_seo_desc": "VIBE Real Estate — وسيط عقاري مستقل بيعرض مشاريع كبرى شركات التطوير العقاري في مصر. من مشاريع بالم هيلز: PX وPalm Parks وCrown Extension وPalm Hills One وBamboo III، بالأسعار وخطط السداد.",
+        "home_seo_desc": "VIBE Real Estate وسيط عقاري مستقل في مصر. أسعار وخطط سداد مشاريع بالم هيلز: PX وPalm Parks وCrown Extension وPalm Hills One وBamboo III.",
         "home_nav": [("#about", "عن VIBE"), ("#projects", "المشاريع"), ("#compare", "مقارنة الأسعار"), ("#developer", "عن المطوّر"), ("#faq", "أسئلة شائعة")],
         "cmp_eyebrow": "Compare", "cmp_h": "مقارنة سريعة بين المشاريع", "cmp_p": "الأسعار وخطط السداد لكل مشروع في جدول واحد",
         "cmp_cols": ["المشروع", "أنواع الوحدات", "يبدأ من", "المقدم", "التقسيط", "الاستلام", "العرض"],
@@ -441,7 +441,7 @@ T = {
                 ("leaf", "مساحات خضراء واسعة", "كثافة بنائية قليلة ومسطحات خضراء في كل مشروع."),
                 ("key", "سجل تسليم موثوق", "أكتر من 38 مشروع مُسلّم و70 ألف عائلة ساكنة فعليًا."),
                 ("coins", "قيمة استثمارية", "طلب مستمر على إعادة البيع والإيجار في مشاريع الشركة.")],
-        "faq_eyebrow": "FAQ", "faq_h": "أسئلة شائعة",
+        "faq_eyebrow": "FAQ", "faq_h": "أسئلة شائعة", "faq_h_project": "أسئلة شائعة عن {t}",
         "faq": [("هل VIBE Real Estate هي الشركة المطوّرة؟", "لا. VIBE وسيط عقاري مستقل بيعرض ويسوّق مشاريع مطوّرين عقاريين مختلفين، ومنهم Palm Hills Developments، والتعاقد بيتم مع المطوّر مباشرة."),
                 ("إيه أقل مقدم في مشاريع بالم هيلز المعروضة؟", "المقدم في المشاريع الخمسة المعروضة 5% من قيمة الوحدة."),
                 ("أطول مدة تقسيط كام سنة؟", "حتى 10 سنوات في PX وBamboo III، وحتى 8 سنوات في Palm Parks وCrown Extension وPalm Hills One."),
@@ -527,7 +527,7 @@ T = {
         "ft_rights": "All rights reserved", "ft_about": "About Us", "ft_priv": "Privacy Policy",
         "crumb_home": "Home",
         "home_seo_title": "VIBE Real Estate | Independent Property Broker in Egypt",
-        "home_seo_desc": "VIBE Real Estate — an independent property broker presenting projects from Egypt's leading developers. Palm Hills projects include PX, Palm Parks, Crown Extension, Palm Hills One and Bamboo III, with prices and payment plans.",
+        "home_seo_desc": "VIBE Real Estate is an independent property broker in Egypt. Prices and payment plans for Palm Hills projects: PX, Palm Parks, Crown Extension, Palm Hills One and Bamboo III.",
         "home_nav": [("#about", "About VIBE"), ("#projects", "Projects"), ("#compare", "Compare prices"), ("#developer", "The developer"), ("#faq", "FAQ")],
         "cmp_eyebrow": "Compare", "cmp_h": "Projects at a glance", "cmp_p": "Prices and payment plans for every project in one table",
         "cmp_cols": ["Project", "Unit types", "From", "Down payment", "Installments", "Delivery", "Offer"],
@@ -540,7 +540,7 @@ T = {
                 ("leaf", "Wide green spaces", "Low density and landscaped greenery in every project."),
                 ("key", "A trusted delivery record", "Over 38 delivered projects and 70,000 families already living there."),
                 ("coins", "Investment value", "Steady resale and rental demand across the company's projects.")],
-        "faq_eyebrow": "FAQ", "faq_h": "Frequently asked questions",
+        "faq_eyebrow": "FAQ", "faq_h": "Frequently asked questions", "faq_h_project": "{t}: frequently asked questions",
         "faq": [("Is VIBE Real Estate the developer?", "No. VIBE is an independent broker that presents and markets projects from different developers, including Palm Hills Developments. Contracts are signed directly with the developer."),
                 ("What is the lowest down payment in the Palm Hills projects shown?", "The down payment in the five projects shown is 5% of the unit price."),
                 ("What is the longest installment period?", "Up to 10 years in PX and Bamboo III, and up to 8 years in Palm Parks, Crown Extension and Palm Hills One."),

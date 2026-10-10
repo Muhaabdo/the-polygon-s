@@ -19,7 +19,7 @@ from site_data import SITE, PROJECTS, T  # noqa: E402
 from pages_data import ABOUT, PRIVACY, PRIVACY_EMAIL, MISC  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010r"
+ASSET_V = "20261011a"
 
 
 def ic(name):
@@ -227,6 +227,72 @@ def other_cards(slug, lang, t):
     return "\n   ".join(out)
 
 
+def unit_size(u, t):
+    """Plain-text size of a unit: built-up area, plus land when the unit has it."""
+    if u.get("area"):
+        return f'{u["area"]} {t["sqm"]}'
+    out = f'{t["u_bua"]} {u["bua"]} {t["sqm"]}'
+    if u.get("land"):
+        out += f'، {t["u_land"]} {u["land"]} {t["sqm"]}' if t["dir"] == "rtl" else f', {t["u_land"].lower()} {u["land"]} {t["sqm"]}'
+    return out
+
+
+def project_faq(p, lang, t):
+    """Question/answer pairs built from the project data, so they always match the prices on the page.
+    Shown on the page and repeated in the FAQPage schema and in llms.txt."""
+    ar = lang == "ar"
+    name, units, disc, launch = p["title"], p["units"], p["discount"], p.get("launch")
+    egp = t["egp"]
+    sep = "؛ " if ar else "; "
+    price_list = sep.join((f'{u["name"]} {"من" if ar else "from"} {money(u["price"])} {egp}' if ar
+                           else f'{u["name"]} from {egp} {money(u["price"])}') for u in units if u.get("price"))
+    size_list = sep.join(f'{u["name"]} ({unit_size(u, t)})' for u in units)
+    qa = []
+    if ar:
+        qa.append((f"فين مكان {name}؟", f'{p["location"]["text"]["ar"]} المشروع من تطوير Palm Hills Developments.'))
+        qa.append((f"أسعار {name} بتبدأ من كام؟",
+                   f'الأسعار بتبدأ من {money(p["price_from"])} جنيه. أسعار الوحدات المتاحة: {price_list}.'))
+        pay = f'مقدم {p["down"]}% وتقسيط حتى {p["years"]} سنوات.'
+        if disc:
+            pay += f' وفيه خصم يصل إلى {disc["pct"]}% على نظام تقسيط {disc["years"]} سنوات.'
+        if launch:
+            pay += f' مرحلة {launch["name"]}: مقدم {launch["down"]}% وتقسيط حتى {launch["years"]} سنوات.'
+        qa.append((f"إيه أنظمة السداد في {name}؟", pay))
+        qa.append((f"إيه أنواع الوحدات والمساحات في {name}؟", f"{size_list}."))
+        qa.append((f"إمتى استلام {name}؟", f'الاستلام {"يبدأ من " if p["name"] == "PX" else "في "}{p["delivery"]} حسب المطوّر.'))
+    else:
+        qa.append((f"Where is {name} located?", f'{p["location"]["text"]["en"]} It is developed by Palm Hills Developments.'))
+        qa.append((f"What are the starting prices in {name}?",
+                   f'Prices start from EGP {money(p["price_from"])}. Available units: {price_list}.'))
+        pay = f'{p["down"]}% down payment with installments over up to {p["years"]} years.'
+        if disc:
+            pay += f' A discount of up to {disc["pct"]}% is available on the {disc["years"]}-year plan.'
+        if launch:
+            pay += f' The {launch["name"]} phase: {launch["down"]}% down payment over up to {launch["years"]} years.'
+        qa.append((f"What payment plans are available in {name}?", pay))
+        qa.append((f"What unit types and sizes are available in {name}?", f"{size_list}."))
+        qa.append((f"When is {name} delivered?", f'Delivery {"starts in" if p["name"] == "PX" else "is in"} {p["delivery"]}, according to the developer.'))
+    all_units = units + (launch["units"] if launch else [])
+    fin = {u.get("finish") for u in all_units}
+    if fin == {"ff"}:
+        qa.append((f"هل وحدات {name} متشطبة؟", "أيوه، كل الوحدات المعروضة متشطبة بالكامل.") if ar else
+                  (f"Are {name} homes finished?", "Yes, all the units shown are delivered fully finished."))
+    elif launch and {"ff", "cs"} <= {u.get("finish") for u in launch["units"]}:
+        qa.append((f"هل وحدات {launch['name']} متشطبة؟",
+                   f"التاون هاوس في {launch['name']} متشطب بالكامل، والفيلات Core & Shell.") if ar else
+                  (f"Are {launch['name']} homes finished?",
+                   f"Town houses in {launch['name']} are fully finished; villas are delivered Core & Shell."))
+    qa.append((f"هل VIBE Real Estate هي المطوّر بتاع {name}؟",
+               "لا. المطوّر هو Palm Hills Developments. VIBE Real Estate وسيط عقاري مستقل بيعرض المشروع وبيساعدك تختار الوحدة، والتعاقد بيتم مع المطوّر مباشرة.") if ar else
+              (f"Is VIBE Real Estate the developer of {name}?",
+               "No. The developer is Palm Hills Developments. VIBE Real Estate is an independent broker that presents the project and helps you choose a unit; contracts are signed directly with the developer."))
+    qa.append(("هل الأسعار المعروضة نهائية؟",
+               "الأسعار استرشادية وقابلة للتغيير من المطوّر دون إشعار مسبق، والمرجع النهائي هو المطوّر وقت التعاقد.") if ar else
+              ("Are the prices shown final?",
+               "Prices are indicative and may be changed by the developer without notice. The developer is the final reference at the time of contracting."))
+    return qa
+
+
 def jsonld(slug, p, lang, t):
     page = url(slug, lang, True)
     org = SITE["domain"] + "/#organization"
@@ -245,6 +311,8 @@ def jsonld(slug, p, lang, t):
         {"@type": "ApartmentComplex", "@id": page + "#project", "name": p["title"], "url": page,
          "description": p["about"][lang][0], "image": hero,
          "address": {"@type": "PostalAddress", "addressLocality": p["area"]["en"], "addressRegion": "Giza", "addressCountry": "EG"}},
+        {"@type": "FAQPage", "@id": page + "#faq", "inLanguage": lang, "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in project_faq(p, lang, t)]},
     ]
     return json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, indent=1)
 
@@ -306,6 +374,8 @@ def project_page(slug, lang):
         for f in p["features"])
     facts = "".join(f'<div class="fact"><b class="num">{esc(f["v"])}</b><span>{esc(f[lang])}</span></div>' for f in p["facts"])
     about_ps = "".join(f"<p>{esc(x)}</p>" for x in p["about"][lang])
+    faq_html = "".join(f'<details class="faq"><summary>{esc(q)}{ic("chev-d")}</summary><p>{esc(a_)}</p></details>'
+                       for q, a_ in project_faq(p, lang, t))
 
     unit_cards = [unit_card(p, u, lang, t, title) for u in p["units"]]
     launch_html = ""
@@ -433,6 +503,13 @@ def project_page(slug, lang):
    <button class="car-btn next" type="button" aria-label="next">{ic(next_i)}</button>
    <div class="car-dots"></div>
   </div>
+ </div>
+</section>
+
+<section class="sec" id="faq">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(t["faq_eyebrow"])}</div><h2>{esc(t["faq_h_project"].format(t=title))}</h2></div>
+  <div class="faqs">{faq_html}</div>
  </div>
 </section>
 
@@ -833,9 +910,45 @@ def sitemap():
     write("robots.txt", f"User-agent: *\nAllow: /\nDisallow: /thank-you\nDisallow: /en/thank-you\nDisallow: /tools/\n\nSitemap: {SITE['domain']}/sitemap.xml\n")
 
 
+def llms_txt():
+    """/llms.txt — a plain-markdown summary of the site for AI assistants and answer engines."""
+    t = T["en"]
+    d = SITE["domain"]
+    out = [f'# {SITE["brand"]}', "",
+           "> VIBE Real Estate is an independent real-estate broker in Egypt. It presents residential projects from "
+           "Egypt's leading developers, helps buyers compare units, prices and payment plans, and connects them with "
+           "the developer. VIBE is not a developer: contracts are signed directly with the developer.", "",
+           "Prices are in Egyptian pounds (EGP), are indicative, and may be changed by the developer without notice.",
+           f'Contact: phone / WhatsApp {SITE["tel_intl"]}. The site is available in Arabic ({d}/) and English ({d}/en/).', "",
+           "## Projects (Palm Hills Developments, West Cairo)", ""]
+    for slug, p in PROJECTS.items():
+        if not p.get("ready"):
+            continue
+        out.append(f'- [{p["title"]}]({url(slug, "en", True)}): {p["about"]["en"][0]} From EGP {money(p["price_from"])}, '
+                   f'{p["down"]}% down payment, up to {p["years"]} years installments, delivery {p["delivery"]}.')
+    out += ["", "## Company", "",
+            f'- [About VIBE Real Estate]({url("about-us", "en", True)}): who we are and how we work as an independent broker.',
+            f'- [Privacy policy]({url("privacy-policy", "en", True)}): how enquiry data is collected and used.',
+            f'- [Home]({url("", "en", True)}): all projects, a side-by-side comparison and general questions.', ""]
+    for slug, p in PROJECTS.items():
+        if not p.get("ready"):
+            continue
+        out += [f'## {p["title"]}', "", f'Page: {url(slug, "en", True)} (Arabic: {url(slug, "ar", True)})', ""]
+        out += [" ".join(p["about"]["en"]), ""]
+        out.append("| Unit | Size | Price from (EGP) |")
+        out.append("|---|---|---|")
+        for u in p["units"] + (p["launch"]["units"] if p.get("launch") else []):
+            out.append(f'| {u["name"]} | {unit_size(u, t)} | {money(u["price"]) if u.get("price") else "On request"} |')
+        out.append("")
+        for q, a in project_faq(p, "en", t):
+            out += [f"**{q}** {a}", ""]
+    write("llms.txt", "\n".join(out).rstrip() + "\n")
+
+
 def main():
     build_sprite()
     sitemap()
+    llms_txt()
     for slug, p in PROJECTS.items():
         if not p.get("ready"):
             continue
