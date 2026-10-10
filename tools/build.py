@@ -368,7 +368,7 @@ def project_page(slug, lang):
 <section class="hero{"" if hero_img else " hero-plain"}">
  {f'<img class="hero-bg" src="{hero_img}" alt="{esc(title)}" fetchpriority="high">' if hero_img else ""}
  <div class="hero-in">
-  <div class="eyebrow">Palm Hills Developments</div>
+  <div class="eyebrow">VIBE Real Estate</div>
   <h1><span class="ltr">{esc(title)}</span></h1>
   <p class="hero-sub">{esc(p["hero_sub"][lang])}</p>
   {offer_badge}
@@ -437,7 +437,7 @@ def project_page(slug, lang):
  <div class="wrap">
   <div class="final">
    <div>
-    <div class="eyebrow">Palm Hills Developments</div>
+    <div class="eyebrow">VIBE Real Estate</div>
     <h2>{t["final_h"].format(t='<span class="ltr">' + esc(title) + '</span>')}</h2>
     <p class="final-lead">{esc(t["final_lead"])}</p>
     <ul class="final-points">{points}</ul>
