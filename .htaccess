@@ -5,6 +5,9 @@
 
 RewriteEngine On
 
+# Build scripts are not part of the public site.
+RewriteRule ^tools/ - [F,L]
+
 # If the request already resolves to a real file or directory, leave it alone
 # (assets, images, this file itself, etc.).
 RewriteCond %{REQUEST_FILENAME} -f [OR]
