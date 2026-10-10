@@ -18,7 +18,7 @@ sys.path.insert(0, HERE)
 from site_data import SITE, PROJECTS, T  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010c"
+ASSET_V = "20261010d"
 
 
 def ic(name):
@@ -88,7 +88,11 @@ def lang_bar(slug, lang, t):
 def unit_card(p, u, lang, t, title, launch=None):
     """One unit card. `launch` is the new-phase dict when the unit belongs to it."""
     value = f'{launch["name"]} - {u["name"]}' if launch else u["name"]
-    imgs = "".join(f'<img src="{img(p["img"], i)}" alt="{esc(title)} — {esc(u["name"])}" loading="lazy">' for i in u["imgs"])
+    imgs = "".join(f'<img src="{img(p["img"], i)}" alt="{esc(title)} — {esc(u["name"])}" loading="lazy">' for i in u.get("imgs", []))
+    mini = (f'''<div class="mini">{imgs}</div>
+     <button class="mini-nav prev" type="button" aria-label="prev">{ic("chev-r" if t["dir"] == "rtl" else "chev-l")}</button>
+     <button class="mini-nav next" type="button" aria-label="next">{ic("chev-l" if t["dir"] == "rtl" else "chev-r")}</button>
+     <div class="mini-dots"></div>''' if imgs else "")
     badges = [esc(b) for b in u.get("badges", [])]
     if u.get("finish"):
         badges.append(esc(t["fin_" + u["finish"]]))
@@ -103,10 +107,7 @@ def unit_card(p, u, lang, t, title, launch=None):
     off = f'<span class="card-off">{esc(t["new_launch"])}</span>' if launch else ""
     return f'''<article class="card">
     <div class="card-media">
-     <div class="mini">{imgs}</div>
-     <button class="mini-nav prev" type="button" aria-label="prev">{ic("chev-r" if t["dir"] == "rtl" else "chev-l")}</button>
-     <button class="mini-nav next" type="button" aria-label="next">{ic("chev-l" if t["dir"] == "rtl" else "chev-r")}</button>
-     <div class="mini-dots"></div>
+     {mini}
      {off}<span class="card-tag">{ic("pin")} {esc(launch["name"] if launch else p["area"][lang])}</span>
     </div>
     <div class="card-body">
@@ -198,10 +199,8 @@ def other_cards(slug, lang, t):
     for s, o in PROJECTS.items():
         if s == slug:
             continue
-        media = (f'<img src="{img(o["img"], "card")}" alt="{esc(o["title"])}" loading="lazy" width="900" height="600" '
-                 f'style="width:100%;height:100%;object-fit:cover">') if o["img"] and s != "px" else ""
-        if s == "px":
-            media = f'<img src="{img("px", "hero")}" alt="{esc(o["title"])}" loading="lazy" style="width:100%;height:100%;object-fit:cover">'
+        media = (f'<img src="{img(o["img"], o["card"])}" alt="{esc(o["title"])}" loading="lazy" '
+                 f'style="width:100%;height:100%;object-fit:cover">') if o.get("card") else ""
         off = f'<span class="card-off">{esc(t["more_off"].format(p=o["discount"]["pct"]))}</span>' if o["discount"] else ""
         badges = "".join(f'<span class="badge">{esc(b)}</span>' for b in o["types"][lang])
         out.append(f'''<a class="card" href="{url(s, lang)}" data-track="project_switch" data-loc="other_projects" data-target="{esc(o["name"])}">
@@ -224,19 +223,20 @@ def other_cards(slug, lang, t):
 def jsonld(slug, p, lang, t):
     page = url(slug, lang, True)
     org = SITE["domain"] + "/#organization"
+    hero = SITE["domain"] + img(p["img"], p["hero"]) if p.get("hero") else SITE["domain"] + img("px", "hero")
     graph = [
         {"@type": "RealEstateAgent", "@id": org, "name": SITE["brand"], "url": SITE["domain"] + "/",
-         "telephone": SITE["tel_intl"], "image": SITE["domain"] + img(p["img"], "hero"),
+         "telephone": SITE["tel_intl"], "image": hero,
          "address": {"@type": "PostalAddress", "addressLocality": "Cairo", "addressCountry": "EG"}},
         {"@type": "WebPage", "@id": page + "#webpage", "url": page, "name": p["seo"][lang]["title"],
          "description": p["seo"][lang]["desc"], "inLanguage": lang,
-         "primaryImageOfPage": SITE["domain"] + img(p["img"], "hero"),
+         "primaryImageOfPage": hero,
          "publisher": {"@id": org}, "breadcrumb": {"@id": page + "#breadcrumb"}},
         {"@type": "BreadcrumbList", "@id": page + "#breadcrumb", "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": t["crumb_home"], "item": url("", lang, True)},
             {"@type": "ListItem", "position": 2, "name": p["title"], "item": page}]},
         {"@type": "ApartmentComplex", "@id": page + "#project", "name": p["title"], "url": page,
-         "description": p["about"][lang][0], "image": SITE["domain"] + img(p["img"], "hero"),
+         "description": p["about"][lang][0], "image": hero,
          "address": {"@type": "PostalAddress", "addressLocality": p["area"]["en"], "addressRegion": "Giza", "addressCountry": "EG"}},
     ]
     return json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, indent=1)
@@ -280,13 +280,14 @@ def project_page(slug, lang):
     p, t = PROJECTS[slug], T[lang]
     title = p["title"]
     alternates = [("ar", url(slug, "ar", True)), ("en", url(slug, "en", True)), ("x-default", url(slug, "ar", True))]
-    hero_img = img(p["img"], "hero")
+    hero_img = img(p["img"], p["hero"]) if p.get("hero") else None
+    has_gallery = len(p.get("gallery", [])) >= 2
     cfg = {
         "lang": lang, "project": p["name"], "projectName": title, "endpoint": SITE["endpoint"],
         "thankYou": url("thank-you", lang),
         "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"]},
     }
-    nav_links = "".join(f'<a href="{h}">{esc(x)}</a>' for h, x in t["nav"])
+    nav_links = "".join(f'<a href="{h}">{esc(x)}</a>' for h, x in t["nav"] if has_gallery or h != "#gallery")
     disc = p["discount"]
     offer_badge = (f'<div class="hero-offer">{ic("tag")} {esc(t["offer_badge"].format(p=disc["pct"], y=disc["years"]))}</div>' if disc else "")
     millions = f'{p["price_from"] / 1e6:.1f}'
@@ -325,12 +326,28 @@ def project_page(slug, lang):
     gallery = "".join(
         f'<figure data-lb="{img(p["img"], g["img"])}" data-lb-group="gallery" data-cap="{esc(g["cap"][lang])}">'
         f'<img src="{img(p["img"], g["img"])}" alt="{esc(g["cap"][lang])}" loading="lazy"><figcaption>{esc(g["cap"][lang])}</figcaption></figure>'
-        for g in p["gallery"])
+        for g in p.get("gallery", []))
     points = "".join(f"<li>{ic('check')} {esc(x)}</li>" for x in t["final_points"])
     prev_i, next_i = ("chev-r", "chev-l") if t["dir"] == "rtl" else ("chev-l", "chev-r")
 
+    gallery_sec = f'''<section class="sec" id="gallery">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(t["gal_eyebrow"])}</div><h2>{esc(t["gal_h"])}</h2><p>{esc(t["gal_p"].format(t=title))}</p></div>
+  <div class="car gal">
+   <button class="car-btn prev" type="button" aria-label="prev">{ic(prev_i)}</button>
+   <div class="car-track">{gallery}</div>
+   <button class="car-btn next" type="button" aria-label="next">{ic(next_i)}</button>
+   <div class="car-dots"></div>
+  </div>
+ </div>
+</section>''' if has_gallery else ""
+    loc_map = (f'''<div>
+    <div class="loc-map" data-lb="{img(p["img"], loc["map"])}" data-lb-group="map" data-cap="{esc(loc["map_cap"][lang])}"><img src="{img(p["img"], loc["map"])}" alt="{esc(title)} master plan" loading="lazy"></div>
+    <p class="loc-cap">{esc(loc["map_cap"][lang])}</p>
+   </div>''' if loc.get("map") else "")
+
     html = head(p["seo"][lang]["title"], p["seo"][lang]["desc"], url(slug, lang, True), alternates, lang, t,
-                og_img=SITE["domain"] + hero_img, preload=hero_img, ld=jsonld(slug, p, lang, t))
+                og_img=(SITE["domain"] + hero_img) if hero_img else None, preload=hero_img, ld=jsonld(slug, p, lang, t))
     html += f'''{lang_bar(slug, lang, t)}
 <header class="nav">
  <div class="wrap">
@@ -342,8 +359,8 @@ def project_page(slug, lang):
 </header>
 
 <main>
-<section class="hero">
- <img class="hero-bg" src="{hero_img}" alt="{esc(title)}" fetchpriority="high">
+<section class="hero{"" if hero_img else " hero-plain"}">
+ {f'<img class="hero-bg" src="{hero_img}" alt="{esc(title)}" fetchpriority="high">' if hero_img else ""}
  <div class="hero-in">
   <div class="eyebrow">Palm Hills Developments</div>
   <h1><span class="ltr">{esc(title)}</span></h1>
@@ -362,7 +379,7 @@ def project_page(slug, lang):
 <section class="sec" id="units">
  <div class="wrap">
   <div class="sec-head"><div class="eyebrow">{esc(t["units_eyebrow"])}</div><h2>{esc(t["units_h"].format(t=title))}</h2><p>{esc(t["units_p"])}</p></div>
-  <div class="cards">
+  <div class="cards{" cards-3" if len(unit_cards) == 3 else ""}">
    {"".join(unit_cards)}
   </div>
   {launch_html}
@@ -377,9 +394,9 @@ def project_page(slug, lang):
 <section class="sec sec-white" id="about">
  <div class="wrap">
   <div class="sec-head"><div class="eyebrow">{esc(t["about_eyebrow"])}</div><h2>{esc(t["about_h"].format(t=title))}</h2><p>{esc(t["about_p"])}</p></div>
-  <div class="about">
+  <div class="about{"" if p.get("about_img") else " about-solo"}">
    <div class="about-text">{about_ps}<div class="about-facts">{facts}</div></div>
-   <div class="about-img"><img src="{img(p["img"], "view")}" alt="{esc(title)}" loading="lazy"></div>
+   {f'<div class="about-img"><img src="{img(p["img"], p["about_img"])}" alt="{esc(title)}" loading="lazy"></div>' if p.get("about_img") else ""}
   </div>
   <div class="feats">{feats}</div>
  </div>
@@ -388,28 +405,14 @@ def project_page(slug, lang):
 <section class="sec sec-dark" id="location">
  <div class="wrap">
   <div class="sec-head"><div class="eyebrow">{esc(t["loc_eyebrow"])}</div><h2>{esc(t["loc_h"].format(t=title))}</h2><p>{esc(t["loc_p"])}</p></div>
-  <div class="loc">
+  <div class="loc{"" if loc.get("map") else " loc-solo"}">
    <div><p class="loc-text">{esc(loc["text"][lang])}</p><div class="loc-list">{loc_items}</div></div>
-   <div>
-    <div class="loc-map" data-lb="{img(p["img"], loc["map"])}" data-lb-group="map" data-cap="{esc(loc["map_cap"][lang])}"><img src="{img(p["img"], loc["map"])}" alt="{esc(title)} master plan" loading="lazy"></div>
-    <p class="loc-cap">{esc(loc["map_cap"][lang])}</p>
-   </div>
+   {loc_map}
   </div>
  </div>
 </section>
 
-<section class="sec" id="gallery">
- <div class="wrap">
-  <div class="sec-head"><div class="eyebrow">{esc(t["gal_eyebrow"])}</div><h2>{esc(t["gal_h"])}</h2><p>{esc(t["gal_p"].format(t=title))}</p></div>
-  <div class="car gal">
-   <button class="car-btn prev" type="button" aria-label="prev">{ic(prev_i)}</button>
-   <div class="car-track">{gallery}</div>
-   <button class="car-btn next" type="button" aria-label="next">{ic(next_i)}</button>
-   <div class="car-dots"></div>
-  </div>
- </div>
-</section>
-
+{gallery_sec}
 <section class="sec sec-white" id="more">
  <div class="wrap">
   <div class="sec-head"><div class="eyebrow">{esc(t["more_eyebrow"])}</div><h2>{esc(t["more_h"])}</h2><p>{esc(t["more_p"].format(t=title))}</p></div>
@@ -513,8 +516,28 @@ def write(rel, content):
     print("built", rel, f"({len(content.encode('utf-8')) // 1024} KB)")
 
 
+def sitemap():
+    import datetime
+    today = datetime.date.today().isoformat()
+    out = ['<?xml version="1.0" encoding="UTF-8"?>',
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
+    for path in ["/", "/palm-hills-projects-west", "/palm-hills-projects-east", "/hacienda-ras-al-hekma", "/about-us", "/privacy-policy"]:
+        out.append(f"  <url><loc>{SITE['domain']}{path}</loc></url>")
+    for slug, p in PROJECTS.items():
+        if not p.get("ready"):
+            continue
+        for lang in LANGS:
+            alts = "".join(f'<xhtml:link rel="alternate" hreflang="{h}" href="{url(slug, l, True)}"/>'
+                           for h, l in (("ar", "ar"), ("en", "en"), ("x-default", "ar")))
+            out.append(f"  <url><loc>{url(slug, lang, True)}</loc><lastmod>{today}</lastmod>{alts}</url>")
+    out.append("</urlset>")
+    write("sitemap.xml", "\n".join(out) + "\n")
+    write("robots.txt", f"User-agent: *\nAllow: /\nDisallow: /thank-you\nDisallow: /en/thank-you\nDisallow: /tools/\n\nSitemap: {SITE['domain']}/sitemap.xml\n")
+
+
 def main():
     build_sprite()
+    sitemap()
     for slug, p in PROJECTS.items():
         if not p.get("ready"):
             continue
