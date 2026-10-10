@@ -325,10 +325,45 @@ def jsonld(slug, p, lang, t):
     return json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, indent=1)
 
 
+OG_DEFAULT = "/assets/img/projects/palm-parks/og.jpg"   # share image for the home page and pages without a hero
+
+
+def og_path(p):
+    return f'/assets/img/projects/{p["img"]}/og.jpg' if p.get("hero") else OG_DEFAULT
+
+
+def build_og():
+    """1200x630 JPG share images (WhatsApp / Facebook / X previews) cropped from each project's hero.
+    Needs Pillow; skipped quietly when it is not installed (the committed files are then reused)."""
+    try:
+        from PIL import Image
+    except ImportError:
+        print("og images: Pillow not installed, keeping existing files")
+        return
+    for slug, p in PROJECTS.items():
+        if not p.get("hero"):
+            continue
+        src = os.path.join(ROOT, "assets", "img", "projects", p["img"], p["hero"] + ".webp")
+        dst = os.path.join(ROOT, "assets", "img", "projects", p["img"], "og.jpg")
+        if os.path.exists(dst) and os.path.getmtime(dst) >= os.path.getmtime(src):
+            continue
+        im = Image.open(src).convert("RGB")
+        w, h = im.size
+        scale = max(1200 / w, 630 / h)
+        im = im.resize((round(w * scale), round(h * scale)), Image.LANCZOS)
+        w, h = im.size
+        left, top = (w - 1200) // 2, (h - 630) // 2
+        im.crop((left, top, left + 1200, top + 630)).save(dst, "JPEG", quality=84, optimize=True, progressive=True)
+        print("built og image for", slug)
+
+
 def head(title, desc, canonical, alternates, lang, t, og_img=None, robots="max-image-preview:large", preload=None, ld=None):
     alt = "".join(f'<link rel="alternate" hreflang="{h}" href="{u}">\n' for h, u in alternates)
-    og = (f'<meta property="og:image" content="{og_img}">\n<meta name="twitter:card" content="summary_large_image">\n'
-          f'<meta name="twitter:image" content="{og_img}">\n') if og_img else ""
+    og_img = og_img or SITE["domain"] + OG_DEFAULT
+    og = (f'<meta property="og:image" content="{og_img}">\n<meta property="og:image:type" content="image/jpeg">\n'
+          f'<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n'
+          f'<meta property="og:image:alt" content="{esc(title)}">\n<meta name="twitter:card" content="summary_large_image">\n'
+          f'<meta name="twitter:image" content="{og_img}">\n')
     pre = f'<link rel="preload" as="image" href="{preload}" fetchpriority="high">\n' if preload else ""
     ldtag = f'<script type="application/ld+json">\n{ld}\n</script>\n' if ld else ""
     return f'''<!DOCTYPE html>
@@ -434,7 +469,7 @@ def project_page(slug, lang):
    </div>''' if loc.get("map") else "")
 
     html = head(p["seo"][lang]["title"], p["seo"][lang]["desc"], url(slug, lang, True), alternates, lang, t,
-                og_img=(SITE["domain"] + hero_img) if hero_img else None, preload=hero_img, ld=jsonld(slug, p, lang, t))
+                og_img=SITE["domain"] + og_path(p), preload=hero_img, ld=jsonld(slug, p, lang, t))
     html += f'''{lang_bar(slug, lang, t)}
 <header class="nav">
  <div class="wrap">
@@ -616,7 +651,7 @@ def home_page(lang):
         {"@type": "WebSite", "@id": SITE["domain"] + "/#website", "url": SITE["domain"] + "/", "name": SITE["brand"], "inLanguage": ["ar", "en"], "publisher": {"@id": org}},
         {"@type": "ItemList", "name": t["home_h1"], "itemListElement": items}, faq_ld]}, ensure_ascii=False, indent=1)
     html = head(t["home_seo_title"], t["home_seo_desc"], url("", lang, True), alternates, lang, t,
-                og_img=SITE["domain"] + hero_img, preload=hero_img, ld=ld)
+                preload=hero_img, ld=ld)
     html += f'''{lang_bar("", lang, t)}
 <header class="nav">
  <div class="wrap">
@@ -958,6 +993,7 @@ def llms_txt():
 
 def main():
     build_sprite()
+    build_og()
     sitemap()
     llms_txt()
     for slug, p in PROJECTS.items():
