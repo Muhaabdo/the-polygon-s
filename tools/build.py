@@ -18,7 +18,7 @@ sys.path.insert(0, HERE)
 from site_data import SITE, PROJECTS, T  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010h"
+ASSET_V = "20261010i"
 
 
 def ic(name):
@@ -229,7 +229,7 @@ def other_cards(slug, lang, t):
 def jsonld(slug, p, lang, t):
     page = url(slug, lang, True)
     org = SITE["domain"] + "/#organization"
-    hero = SITE["domain"] + img(p["img"], p["hero"]) if p.get("hero") else SITE["domain"] + img("px", "hero")
+    hero = SITE["domain"] + img(p["img"], p["hero"]) if p.get("hero") else SITE["domain"] + img("px", "lagoon")
     graph = [
         {"@type": "RealEstateAgent", "@id": org, "name": SITE["brand"], "url": SITE["domain"] + "/",
          "telephone": SITE["tel_intl"], "image": hero,

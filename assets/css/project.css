@@ -245,7 +245,7 @@ ul{list-style:none}
 .loc-solo .loc-list{grid-template-columns:repeat(3,1fr)}
 @media (max-width:640px){.loc-solo .loc-list{grid-template-columns:1fr 1fr}}
 .loc-text{color:rgba(246,243,236,.85);font-size:15px;margin-bottom:18px}
-.loc-map{border-radius:var(--radius);overflow:hidden;border:1px solid rgba(198,161,91,.3);background:#fff;cursor:zoom-in}
+.loc-map{border-radius:var(--radius);overflow:hidden;border:1px solid rgba(198,161,91,.3);background:#000;cursor:zoom-in}
 .loc-map img{width:100%;height:auto}
 .loc-cap{font-size:12px;color:rgba(246,243,236,.6);text-align:center;margin-top:8px}
 @media (max-width:900px){.loc{grid-template-columns:1fr;gap:22px}}
