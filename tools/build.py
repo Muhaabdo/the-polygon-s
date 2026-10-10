@@ -18,7 +18,7 @@ sys.path.insert(0, HERE)
 from site_data import SITE, PROJECTS, T  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010b"
+ASSET_V = "20261010c"
 
 
 def ic(name):
@@ -147,9 +147,9 @@ def cookie(t):
  <button class="ck-x" type="button" data-ck-close aria-label="{esc(t["close"])}">{ic("x")}</button>
  <div class="ck-top">
   <div class="ck-ic">{ic("cookie")}</div>
-  <div><div class="ck-title">{t["ck_title"]}</div><div class="ck-text">{t["ck_text"]}</div></div>
+  <div><div class="ck-title">{t["ck_title"]}</div><div class="ck-text"><span class="ck-long">{t["ck_text"]}</span><span class="ck-short">{t["ck_short"]}</span></div></div>
  </div>
- <button class="btn ck-ok" type="button" data-ck-close>{ic("check")} {esc(t["ck_ok"])}</button>
+ <button class="btn ck-ok" type="button" data-ck-close>{ic("check")} <span class="ck-long">{esc(t["ck_ok"])}</span><span class="ck-short">{esc(t["ck_ok_short"])}</span></button>
 </div>'''
 
 
