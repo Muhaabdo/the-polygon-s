@@ -24,6 +24,7 @@
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{margin:0;font-family:var(--body);color:var(--ink);background:var(--ivory);line-height:1.8;font-size:15px;overflow-x:hidden}
+[hidden]{display:none!important}
 img{max-width:100%;display:block}
 a{color:inherit}
 button{font-family:inherit}
@@ -38,7 +39,7 @@ ul{list-style:none}
 
 /* ---------- Language bar (in normal flow: never covers content) ---------- */
 .lang{background:var(--em-deep);color:rgba(246,243,236,.75);font-size:12px;height:var(--bar-h);border-bottom:1px solid rgba(198,161,91,.18)}
-.lang .wrap{display:flex;align-items:center;justify-content:space-between;height:100%;gap:12px}
+.lang .wrap{display:flex;align-items:center;justify-content:flex-end;height:100%;gap:12px}
 .lang-note{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lang-switch{display:flex;align-items:center;gap:4px;flex-shrink:0}
 .lang-switch a{text-decoration:none;padding:3px 10px;border-radius:100px;font-weight:700;color:rgba(246,243,236,.7)}
@@ -140,15 +141,22 @@ ul{list-style:none}
 .specs{display:flex;background:var(--ivory);border:1px solid rgba(198,161,91,.35);border-radius:12px;margin:4px 0 14px}
 .spec{flex:1;text-align:center;padding:9px 4px}
 .spec+.spec{border-inline-start:1px solid rgba(198,161,91,.35)}
-.spec span{display:block;font-size:11px;color:var(--muted)}
+.spec>span{display:block;font-size:11px;color:var(--muted)}
 .spec b{font-family:var(--head);font-size:16px;color:var(--em);display:inline-block}
 .price{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;margin-top:auto;margin-bottom:14px}
 .price span{font-size:12px;color:var(--muted)}
 .price b{font-family:var(--head);font-size:21px;font-weight:700;color:var(--gold);direction:ltr;unicode-bidi:isolate}
 .disclaimer{max-width:1160px;margin:26px auto 0;display:flex;gap:10px;align-items:flex-start;font-size:11.5px;line-height:1.9;color:rgba(34,39,31,.6)}
 .disclaimer .ic{color:var(--gold);margin-top:5px}
-@media (max-width:1100px){.cards{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:560px){.cards{grid-template-columns:1fr}}
+.cards-3{grid-template-columns:repeat(3,1fr)}
+.price-req{font-size:17px!important;color:var(--em)!important}
+.launch{margin-top:44px;padding-top:40px;border-top:1px dashed rgba(198,161,91,.55)}
+.launch-head{text-align:center;max-width:680px;margin:0 auto 26px}
+.launch-head h3{font-family:var(--head);font-size:clamp(23px,3.6vw,32px);color:var(--em);line-height:1.35;margin:8px 0 6px;unicode-bidi:plaintext}
+.launch-head p{color:var(--muted);font-size:14.5px}
+.launch-pay{display:inline-flex;align-items:center;gap:8px;margin-top:12px;background:var(--em);color:var(--gold-soft);font-weight:800;font-size:13px;padding:6px 16px;border-radius:100px}
+@media (max-width:1100px){.cards,.cards-3{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.cards,.cards-3{grid-template-columns:1fr}}
 
 /* Mini swipe gallery inside a card (scroll-snap: native touch) */
 .mini{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
@@ -335,6 +343,9 @@ ul{list-style:none}
 .ty-ok{width:68px;height:68px;border-radius:50%;background:rgba(37,211,102,.14);color:#1eb857;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 14px}
 .ty h1{font-family:var(--head);color:var(--em);font-size:26px;line-height:1.4}
 .ty p{color:var(--muted);font-size:14.5px;margin-top:6px}
+.ty-points{display:grid;gap:7px;margin:16px auto 0;text-align:start;width:fit-content;max-width:100%}
+.ty-points li{display:flex;gap:9px;align-items:center;font-size:14px;color:var(--ink)}
+.ty-points .ic{color:#1eb857;font-size:13px}
 .ty-ctx{display:inline-block;margin-top:12px;background:var(--ivory);border:1px solid rgba(198,161,91,.45);color:var(--em);font-weight:800;font-size:13px;padding:4px 14px;border-radius:100px;unicode-bidi:plaintext}
 .ty-wa{background:var(--wa);color:#fff;font-size:16px;height:54px;border-radius:14px;width:100%;margin-top:20px}
 .ty-wa .ic{font-size:22px}

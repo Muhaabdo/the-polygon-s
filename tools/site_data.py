@@ -14,7 +14,6 @@ SITE = {
     "tel_intl": "+201006140168",
     # Google Apps Script web-app URL (tools/apps-script/Code.gs). Leads are NOT stored until this is set.
     "endpoint": "",
-    "price_date": {"ar": "أكتوبر 2026", "en": "October 2026"},
 }
 
 # Order = order of the "other projects" carousel.
@@ -28,11 +27,11 @@ PROJECTS = {
         "down": 5, "years": 10,
         "discount": {"pct": 40, "years": 6},
         "delivery": "2028",
-        "types": {"ar": ["شقق", "تاون هاوس"], "en": ["Apartments", "Town Houses"]},
+        "types": {"ar": ["شقق", "تاون هاوس", "فيلات"], "en": ["Apartments", "Town Houses", "Villas"]},
         "img": "px",
         "hero_sub": {
-            "ar": "على أعلى نقطة في بالم هيلز أكتوبر — شقق وتاون هاوس من Palm Hills Developments",
-            "en": "On the highest point of Palm Hills October — apartments and town houses by Palm Hills Developments",
+            "ar": "على أعلى نقطة في بالم هيلز أكتوبر — شقق وتاون هاوس وفيلات من Palm Hills Developments",
+            "en": "On the highest point of Palm Hills October — apartments, town houses and villas by Palm Hills Developments",
         },
         "seo": {
             "ar": {
@@ -83,6 +82,29 @@ PROJECTS = {
             {"name": "Town House", "sub": {"ar": "تاون هاوس — أرض من 212 م²", "en": "Town house — land from 212 m²"},
              "area": "201 – 214", "price": 28528000, "badges": ["Middle", "Corner"], "imgs": ["view", "hero"]},
         ],
+        # New launch inside PX — not in the availability sheet. Source: palmhillsdev.com/px-by-palm-hills
+        "launch": {
+            "name": "Palm Gardens",
+            "intro": {
+                "ar": "مرحلة جديدة جوه PX من التاون هاوس المتشطب بالكامل والفيلات المستقلة، على ارتفاع 128 متر فوق سطح البحر.",
+                "en": "A new phase inside PX: fully finished town houses and standalone villas, set 128 m above sea level.",
+            },
+            "down": 5, "years": "7.5",
+            "units": [
+                {"name": "Townhouse Middle", "sub": {"ar": "3 غرف نوم — غرفة ماستر + ناني", "en": "3 bedrooms — 1 master + nanny room"},
+                 "bua": "201", "land": "212", "price": 32638000, "finish": "ff", "imgs": ["view", "hero"]},
+                {"name": "Townhouse Corner", "sub": {"ar": "3 غرف نوم — غرفة ماستر + ناني", "en": "3 bedrooms — 1 master + nanny room"},
+                 "bua": "211", "land": "216", "price": 34500000, "finish": "ff", "imgs": ["hero", "view"]},
+                {"name": "Villa 4", "sub": {"ar": "4 غرف نوم — 2 ماستر + ناني وسائق", "en": "4 bedrooms — 2 master + nanny & driver"},
+                 "bua": "240", "land": "282", "price": 37000000, "finish": "cs", "imgs": ["view", "hero"]},
+                {"name": "Villa 3", "sub": {"ar": "4 غرف نوم — 2 ماستر + ناني وسائق", "en": "4 bedrooms — 2 master + nanny & driver"},
+                 "bua": "246", "land": "299", "price": 38800000, "finish": "cs", "imgs": ["hero", "view"]},
+                {"name": "Villa 1", "sub": {"ar": "4 غرف نوم — 3 ماستر + أسانسير", "en": "4 bedrooms — 3 master + elevator"},
+                 "bua": "314", "land": "420 – 470", "price": 53000000, "finish": "cs", "imgs": ["view", "hero"]},
+                {"name": "Villa 5", "sub": {"ar": "6 غرف نوم ماستر + أسانسير", "en": "6 master bedrooms + elevator"},
+                 "bua": "428", "land": "545 – 596", "price": None, "finish": "cs", "imgs": ["hero", "view"]},
+            ],
+        },
         "location": {
             "text": {
                 "ar": "PX في قلب بالم هيلز أكتوبر، ومتصل بأهم محاور غرب القاهرة، وحواليه كمبوندات بالم هيلز التانية زي ذا كراون وبالم باركس.",
@@ -134,8 +156,7 @@ PROJECTS = {
 T = {
     "ar": {
         "dir": "rtl", "locale": "ar_EG",
-        "lang_note": "الأسعار محدّثة: {d}",
-        "nav": [("#about", "عن المشروع"), ("#units", "الوحدات والأسعار"), ("#location", "الموقع"), ("#gallery", "الصور"), ("#more", "مشاريع أخرى")],
+        "nav": [("#units", "الوحدات والأسعار"), ("#about", "عن المشروع"), ("#location", "الموقع"), ("#gallery", "الصور"), ("#more", "مشاريع أخرى")],
         "nav_cta": "اعرف الأسعار",
         "menu": "القائمة",
         "cta_main": "تفاصيل أكثر - واتساب",
@@ -146,6 +167,9 @@ T = {
         "about_eyebrow": "About the project", "about_h": "نبذة عن {t}", "about_p": "كل اللي محتاج تعرفه عن المشروع في دقيقة",
         "units_eyebrow": "Units & Prices", "units_h": "الوحدات المتاحة في {t}", "units_p": "اختار نوع الوحدة واعرف السعر وخطة السداد على واتساب",
         "u_area": "المساحة", "u_deliv": "الاستلام", "from": "تبدأ من", "egp": "جنيه", "sqm": "م²",
+        "u_bua": "مساحة المباني", "u_land": "مساحة الأرض", "price_req": "السعر عند الطلب",
+        "new_launch": "لونش جديد", "fin_ff": "متشطب بالكامل", "fin_cs": "Core & Shell",
+        "launch_eyebrow": "New Launch", "launch_h": "مرحلة جديدة: {n}", "launch_pay": "مقدم {d}% وتقسيط حتى {y} سنوات",
         "units_disc": "الأسعار والوحدات المعروضة أعلاه استرشادية وقابلة للتغيير أو التحديث في أي وقت دون إشعار مسبق، حسب سياسة الشركة المطوّرة ومدى توافر الوحدات لديها. جميع الصور والمواد الترويجية تخص Palm Hills Developments وتُعرض بغرض التوضيح فقط.",
         "offer_h": "خصم يصل إلى <b>{p}%</b> مع تقسيط {y} سنوات", "offer_p": "أو مقدم {d}% وتقسيط حتى {yy} سنوات — اسأل عن الخطة الأنسب ليك.",
         "plan_h": "مقدم <b>{d}%</b> وتقسيط حتى <b>{yy} سنوات</b>", "plan_p": "اسأل عن خطة السداد الأنسب ليك وأحدث الوحدات المتاحة.",
@@ -174,7 +198,9 @@ T = {
         "ft_rights": "جميع الحقوق محفوظة", "ft_about": "About Us", "ft_priv": "سياسة الخصوصية",
         "crumb_home": "الرئيسية",
         "ty_seo_title": "شكرًا لتسجيلك – VIBE Real Estate",
-        "ty_title": "تم تسجيل بياناتك", "ty_text": "جاري تحويلك على واتساب عشان تستلم التفاصيل…",
+        "ty_title": "شكرًا لاهتمامك", "ty_title_p": "شكرًا لاهتمامك بـ {p}",
+        "ty_text": "خطوة واحدة وتوصلك التفاصيل على واتساب.",
+        "ty_points": ["أحدث الأسعار والوحدات المتاحة", "خطط السداد والعروض الحالية", "مستشار عقاري يرد على كل أسئلتك"],
         "ty_title_generic": "شكرًا لزيارتك", "ty_text_generic": "تقدر تتواصل معانا على واتساب في أي وقت.",
         "ty_btn": "افتح واتساب الآن", "ty_redirecting": "هنحوّلك على واتساب خلال ثواني…",
         "ty_not_opened": "لو واتساب مفتحش، اضغط الزرار اللي فوق.",
@@ -184,8 +210,7 @@ T = {
     },
     "en": {
         "dir": "ltr", "locale": "en_US",
-        "lang_note": "Prices updated: {d}",
-        "nav": [("#about", "About"), ("#units", "Units & Prices"), ("#location", "Location"), ("#gallery", "Gallery"), ("#more", "Other projects")],
+        "nav": [("#units", "Units & Prices"), ("#about", "About"), ("#location", "Location"), ("#gallery", "Gallery"), ("#more", "Other projects")],
         "nav_cta": "Get prices",
         "menu": "Menu",
         "cta_main": "More details - WhatsApp",
@@ -196,6 +221,9 @@ T = {
         "about_eyebrow": "About the project", "about_h": "About {t}", "about_p": "Everything you need to know in a minute",
         "units_eyebrow": "Units & Prices", "units_h": "Available units in {t}", "units_p": "Pick a unit type and get the price and payment plan on WhatsApp",
         "u_area": "Area", "u_deliv": "Delivery", "from": "From", "egp": "EGP", "sqm": "m²",
+        "u_bua": "Built-up area", "u_land": "Land area", "price_req": "Price on request",
+        "new_launch": "New launch", "fin_ff": "Fully finished", "fin_cs": "Core & Shell",
+        "launch_eyebrow": "New Launch", "launch_h": "New phase: {n}", "launch_pay": "{d}% down payment, up to {y} years installments",
         "units_disc": "Prices and units shown above are indicative and may change or be updated at any time without prior notice, according to the developer's policy and unit availability. All images and promotional materials belong to Palm Hills Developments and are shown for illustration only.",
         "offer_h": "Up to <b>{p}%</b> discount on the {y}-year plan", "offer_p": "Or {d}% down payment with up to {yy} years installments — ask for the plan that suits you.",
         "plan_h": "<b>{d}%</b> down payment, up to <b>{yy} years</b> installments", "plan_p": "Ask about the payment plan that suits you and the latest available units.",
@@ -224,7 +252,9 @@ T = {
         "ft_rights": "All rights reserved", "ft_about": "About Us", "ft_priv": "Privacy Policy",
         "crumb_home": "Home",
         "ty_seo_title": "Thank you – VIBE Real Estate",
-        "ty_title": "Your details are registered", "ty_text": "Taking you to WhatsApp to receive the details…",
+        "ty_title": "Thanks for your interest", "ty_title_p": "Thanks for your interest in {p}",
+        "ty_text": "One more step and the details are yours on WhatsApp.",
+        "ty_points": ["Latest prices and available units", "Payment plans and current offers", "A property consultant to answer your questions"],
         "ty_title_generic": "Thanks for visiting", "ty_text_generic": "You can reach us on WhatsApp any time.",
         "ty_btn": "Open WhatsApp now", "ty_redirecting": "Redirecting you to WhatsApp in a moment…",
         "ty_not_opened": "If WhatsApp didn't open, tap the button above.",

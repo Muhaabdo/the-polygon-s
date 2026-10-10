@@ -37,7 +37,8 @@
   var timer = null;
   function cancel() { if (timer) { clearTimeout(timer); timer = null; } count.textContent = ""; bar.hidden = true; }
 
-  if (!lead) { $("#tyTitle").textContent = T.titleGeneric || ""; $("#tyText").textContent = T.textGeneric || ""; bar.hidden = true; return; }
+  if (!lead) { $("#tyTitle").textContent = T.titleGeneric || ""; $("#tyText").textContent = T.textGeneric || ""; $("#tyPoints").hidden = true; bar.hidden = true; return; }
+  if (lead.project && T.titleProject) $("#tyTitle").textContent = T.titleProject.replace("{p}", lead.project);
 
   if (!lead.confirmed) { lead.confirmed = true; save(); push("thank_you_view"); }
 

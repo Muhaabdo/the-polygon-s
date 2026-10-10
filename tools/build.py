@@ -18,7 +18,7 @@ sys.path.insert(0, HERE)
 from site_data import SITE, PROJECTS, T  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010a"
+ASSET_V = "20261010b"
 
 
 def ic(name):
@@ -77,13 +77,47 @@ def lang_bar(slug, lang, t):
     cur = ' aria-current="true"'
     return f'''<div class="lang">
  <div class="wrap">
-  <span class="lang-note">{esc(t["lang_note"].format(d=SITE["price_date"][lang]))}</span>
   <nav class="lang-switch" aria-label="Language">
    <a href="{url(slug, "ar")}" lang="ar" hreflang="ar"{cur if lang == "ar" else ""}>العربية</a>
    <a href="{url(slug, "en")}" lang="en" hreflang="en"{cur if lang == "en" else ""}>English</a>
   </nav>
  </div>
 </div>'''
+
+
+def unit_card(p, u, lang, t, title, launch=None):
+    """One unit card. `launch` is the new-phase dict when the unit belongs to it."""
+    value = f'{launch["name"]} - {u["name"]}' if launch else u["name"]
+    imgs = "".join(f'<img src="{img(p["img"], i)}" alt="{esc(title)} — {esc(u["name"])}" loading="lazy">' for i in u["imgs"])
+    badges = [esc(b) for b in u.get("badges", [])]
+    if u.get("finish"):
+        badges.append(esc(t["fin_" + u["finish"]]))
+    badges = "".join(f'<span class="badge">{b}</span>' for b in badges)
+    if "land" in u:
+        specs = [(t["u_bua"], u["bua"]), (t["u_land"], u["land"])]
+        spec_html = "".join(f'<div class="spec"><span>{esc(k)}</span><b><span class="ltr">{esc(v)}</span> {esc(t["sqm"])}</b></div>' for k, v in specs)
+    else:
+        spec_html = (f'<div class="spec"><span>{esc(t["u_area"])}</span><b><span class="ltr">{esc(u["area"])}</span> {esc(t["sqm"])}</b></div>'
+                     f'<div class="spec"><span>{esc(t["u_deliv"])}</span><b>{p["delivery"]}</b></div>')
+    price = price_html(u["price"], t) if u["price"] else f'<b class="price-req">{esc(t["price_req"])}</b>'
+    off = f'<span class="card-off">{esc(t["new_launch"])}</span>' if launch else ""
+    return f'''<article class="card">
+    <div class="card-media">
+     <div class="mini">{imgs}</div>
+     <button class="mini-nav prev" type="button" aria-label="prev">{ic("chev-r" if t["dir"] == "rtl" else "chev-l")}</button>
+     <button class="mini-nav next" type="button" aria-label="next">{ic("chev-l" if t["dir"] == "rtl" else "chev-r")}</button>
+     <div class="mini-dots"></div>
+     {off}<span class="card-tag">{ic("pin")} {esc(launch["name"] if launch else p["area"][lang])}</span>
+    </div>
+    <div class="card-body">
+     <h3 class="card-name">{esc(u["name"])}</h3>
+     <div class="card-sub">{esc(u["sub"][lang])}</div>
+     <div class="badges">{badges}</div>
+     <div class="specs">{spec_html}</div>
+     <div class="price">{price}</div>
+     <button class="btn btn-dark" type="button" data-cta="{"launch_card" if launch else "unit_card"}" data-unit="{esc(value)}">{ic("whatsapp")} {esc(t["cta_card"])}</button>
+    </div>
+   </article>'''
 
 
 def footer(lang, t):
@@ -121,6 +155,10 @@ def cookie(t):
 
 def lead_form(p, t, loc, inline=False, uid="m"):
     opts = "".join(f'<option value="{esc(u["name"])}">{esc(u["name"])}</option>' for u in p["units"])
+    if p.get("launch"):
+        L = p["launch"]
+        opts += f'<optgroup label="{esc(L["name"])}">' + "".join(
+            f'<option value="{esc(L["name"])} - {esc(u["name"])}">{esc(u["name"])}</option>' for u in L["units"]) + "</optgroup>"
     return f'''<form class="lf" novalidate data-loc="{loc}"{" data-inline" if inline else ""}>
  <div class="lf-f">
   <label for="{uid}-name">{esc(t["f_name"])}</label>
@@ -259,30 +297,21 @@ def project_page(slug, lang):
     facts = "".join(f'<div class="fact"><b class="num">{esc(f["v"])}</b><span>{esc(f[lang])}</span></div>' for f in p["facts"])
     about_ps = "".join(f"<p>{esc(x)}</p>" for x in p["about"][lang])
 
-    unit_cards = []
-    for u in p["units"]:
-        imgs = "".join(f'<img src="{img(p["img"], i)}" alt="{esc(title)} — {esc(u["name"])}" loading="lazy">' for i in u["imgs"])
-        badges = "".join(f'<span class="badge">{esc(b)}</span>' for b in u["badges"])
-        unit_cards.append(f'''<article class="card">
-    <div class="card-media">
-     <div class="mini">{imgs}</div>
-     <button class="mini-nav prev" type="button" aria-label="prev">{ic("chev-r" if t["dir"] == "rtl" else "chev-l")}</button>
-     <button class="mini-nav next" type="button" aria-label="next">{ic("chev-l" if t["dir"] == "rtl" else "chev-r")}</button>
-     <div class="mini-dots"></div>
-     <span class="card-tag">{ic("pin")} {esc(p["area"][lang])}</span>
-    </div>
-    <div class="card-body">
-     <h3 class="card-name">{esc(u["name"])}</h3>
-     <div class="card-sub">{esc(u["sub"][lang])}</div>
-     <div class="badges">{badges}</div>
-     <div class="specs">
-      <div class="spec"><span>{esc(t["u_area"])}</span><b><span class="ltr">{esc(u["area"])}</span> {esc(t["sqm"])}</b></div>
-      <div class="spec"><span>{esc(t["u_deliv"])}</span><b>{p["delivery"]}</b></div>
-     </div>
-     <div class="price">{price_html(u["price"], t)}</div>
-     <button class="btn btn-dark" type="button" data-cta="unit_card" data-unit="{esc(u["name"])}">{ic("whatsapp")} {esc(t["cta_card"])}</button>
-    </div>
-   </article>''')
+    unit_cards = [unit_card(p, u, lang, t, title) for u in p["units"]]
+    launch_html = ""
+    if p.get("launch"):
+        L = p["launch"]
+        launch_cards = "".join(unit_card(p, u, lang, t, title, launch=L) for u in L["units"])
+        launch_html = f'''
+  <div class="launch" id="launch">
+   <div class="launch-head">
+    <div class="eyebrow">{esc(t["launch_eyebrow"])}</div>
+    <h3>{esc(t["launch_h"].format(n=L["name"]))}</h3>
+    <p>{esc(L["intro"][lang])}</p>
+    <span class="launch-pay">{ic("tag")} {esc(t["launch_pay"].format(d=L["down"], y=L["years"]))}</span>
+   </div>
+   <div class="cards cards-3">{launch_cards}</div>
+  </div>'''
 
     if disc:
         offer_h = t["offer_h"].format(p=disc["pct"], y=disc["years"])
@@ -330,7 +359,22 @@ def project_page(slug, lang):
  </div>
 </section>
 
-<section class="sec" id="about">
+<section class="sec" id="units">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(t["units_eyebrow"])}</div><h2>{esc(t["units_h"].format(t=title))}</h2><p>{esc(t["units_p"])}</p></div>
+  <div class="cards">
+   {"".join(unit_cards)}
+  </div>
+  {launch_html}
+  <div class="offer">
+   <div><h3>{offer_h}</h3><p>{esc(offer_p)}</p></div>
+   <div><button class="btn btn-cta btn-lg" type="button" data-cta="offer">{ic("whatsapp")} {esc(t["offer_cta"])}</button></div>
+  </div>
+  <p class="disclaimer">{ic("info")}<span>{esc(t["units_disc"])}</span></p>
+ </div>
+</section>
+
+<section class="sec sec-white" id="about">
  <div class="wrap">
   <div class="sec-head"><div class="eyebrow">{esc(t["about_eyebrow"])}</div><h2>{esc(t["about_h"].format(t=title))}</h2><p>{esc(t["about_p"])}</p></div>
   <div class="about">
@@ -338,20 +382,6 @@ def project_page(slug, lang):
    <div class="about-img"><img src="{img(p["img"], "view")}" alt="{esc(title)}" loading="lazy"></div>
   </div>
   <div class="feats">{feats}</div>
- </div>
-</section>
-
-<section class="sec sec-white" id="units">
- <div class="wrap">
-  <div class="sec-head"><div class="eyebrow">{esc(t["units_eyebrow"])}</div><h2>{esc(t["units_h"].format(t=title))}</h2><p>{esc(t["units_p"])}</p></div>
-  <div class="cards">
-   {"".join(unit_cards)}
-  </div>
-  <div class="offer">
-   <div><h3>{offer_h}</h3><p>{esc(offer_p)}</p></div>
-   <div><button class="btn btn-cta btn-lg" type="button" data-cta="offer">{ic("whatsapp")} {esc(t["offer_cta"])}</button></div>
-  </div>
-  <p class="disclaimer">{ic("info")}<span>{esc(t["units_disc"])}</span></p>
  </div>
 </section>
 
@@ -450,7 +480,7 @@ def thank_you(lang):
     cfg = {"lang": lang, "wa": SITE["wa"], "t": {
         "waMsg": t["wa_msg"], "waMsgGeneric": t["wa_msg_generic"], "backTo": t["ty_back"],
         "redirecting": t["ty_redirecting"], "notOpened": t["ty_not_opened"],
-        "titleGeneric": t["ty_title_generic"], "textGeneric": t["ty_text_generic"]}}
+        "titleGeneric": t["ty_title_generic"], "textGeneric": t["ty_text_generic"], "titleProject": t["ty_title_p"]}}
     html = head(t["ty_seo_title"], t["ty_text_generic"], url("thank-you", lang, True), alternates, lang, t,
                 robots="noindex, nofollow")
     html += f'''{lang_bar("thank-you", lang, t)}
@@ -460,6 +490,7 @@ def thank_you(lang):
   <h1 id="tyTitle">{esc(t["ty_title"])}</h1>
   <p id="tyText">{esc(t["ty_text"])}</p>
   <span class="ty-ctx" id="tyCtx" hidden></span>
+  <ul class="ty-points" id="tyPoints">{"".join(f"<li>{ic('check')} {esc(x)}</li>" for x in t["ty_points"])}</ul>
   <a class="btn ty-wa" id="tyWa" href="https://wa.me/{SITE["wa"]}" rel="noopener">{ic("whatsapp")} {esc(t["ty_btn"])}</a>
   <div class="ty-bar" id="tyBar"><i></i></div>
   <p class="ty-count" id="tyCount" aria-live="polite"></p>
