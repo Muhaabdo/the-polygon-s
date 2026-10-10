@@ -314,7 +314,7 @@ PROJECTS = {
         "area": {"ar": "أكتوبر", "en": "6th of October"},
         "price_from": 27457000, "down": 5, "years": 10, "discount": None, "delivery": "2029",
         "types": {"ar": ["Family Home", "تاون هاوس"], "en": ["Family Homes", "Town Houses"]},
-        "img": "bamboo-iii", "hero": None, "about_img": None, "card": None,
+        "img": "bamboo-iii", "hero": "hero", "about_img": "lagoon", "card": "card",
         "hero_sub": {
             "ar": "Family Homes وتاون هاوس على محور 26 يوليو — المرحلة الثالثة من Bamboo بالم هيلز",
             "en": "Family homes and town houses on the 26th of July Axis — the third phase of Bamboo by Palm Hills",
@@ -346,13 +346,13 @@ PROJECTS = {
         ],
         "units": [
             {"name": "Family Home with Garden", "sub": {"ar": "Family Home بجاردن خاصة", "en": "Family home with private garden"},
-             "area": "182", "price": 27457000, "badges": ["Garden"], "finish": "ff"},
+             "area": "182", "price": 27457000, "badges": ["Garden"], "finish": "ff", "imgs": ["hero", "lagoon"]},
             {"name": "Family Home with Penthouse", "sub": {"ar": "Family Home ببنتهاوس", "en": "Family home with penthouse"},
-             "area": "191 – 192", "price": 28750000, "badges": ["Penthouse"], "finish": "ff"},
+             "area": "191 – 192", "price": 28750000, "badges": ["Penthouse"], "finish": "ff", "imgs": ["lagoon", "hero"]},
             {"name": "Town House Middle", "sub": {"ar": "تاون هاوس ميدل", "en": "Middle town house"},
-             "bua": "221", "land": "249 – 254", "price": 34342000, "finish": "ff"},
+             "bua": "221", "land": "249 – 254", "price": 34342000, "finish": "ff", "imgs": ["facade", "hero"]},
             {"name": "Town House Corner", "sub": {"ar": "تاون هاوس كورنر", "en": "Corner town house"},
-             "bua": "222", "land": "249 – 254", "price": 35303000, "finish": "ff"},
+             "bua": "222", "land": "249 – 254", "price": 35303000, "finish": "ff", "imgs": ["facade", "lagoon"]},
         ],
         "location": {
             "text": {"ar": "Bamboo III على محور 26 يوليو في أكتوبر، قريب من أكبر مولات غرب القاهرة والجامعات والنوادي.",
@@ -367,7 +367,11 @@ PROJECTS = {
             ],
             "map": None,
         },
-        "gallery": [],
+        "gallery": [
+            {"img": "hero", "cap": {"ar": "Bamboo III — اللاجون والمباني", "en": "Bamboo III — lagoon and buildings"}},
+            {"img": "lagoon", "cap": {"ar": "Bamboo III — المسطحات المائية", "en": "Bamboo III — water features"}},
+            {"img": "facade", "cap": {"ar": "Bamboo III — واجهة الوحدات", "en": "Bamboo III — home façade"}},
+        ],
     },
 }
 
