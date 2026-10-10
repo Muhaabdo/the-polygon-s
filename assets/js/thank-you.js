@@ -52,6 +52,7 @@
      Phones: same-tab redirect; WhatsApp opens as an app and the browser stays on this page. */
   var DESKTOP = !!(window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches);
   if (DESKTOP) btn.target = "_blank";
+  if (lead.newTab) count.textContent = T.openedNewTab || "";
 
   if (!lead.redirected) {
     count.textContent = T.redirecting || "";
