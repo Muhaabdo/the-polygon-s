@@ -18,7 +18,7 @@ sys.path.insert(0, HERE)
 from site_data import SITE, PROJECTS, T  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010g"
+ASSET_V = "20261010h"
 
 
 def ic(name):
@@ -546,8 +546,17 @@ def home_page(lang):
   <div class="hero-stats">{stats}</div>
   <div class="hero-btns">
    <a class="btn btn-cta btn-lg" href="#projects">{esc(t["home_cta2"])}</a>
-   <a class="btn btn-ghost" href="#compare">{esc(t["home_nav"][1][1])}</a>
+   <a class="btn btn-ghost" href="#about">{esc(t["home_nav"][0][1])}</a>
   </div>
+ </div>
+</section>
+
+<section class="sec sec-white" id="about">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(t["home_about_eyebrow"])}</div><h2>{esc(t["home_about_h"])}</h2></div>
+  <div class="home-about">{about_ps}</div>
+  <div class="vibes">{vibe}</div>
+  <p style="text-align:center;margin-top:26px"><a class="btn btn-dark" style="width:auto;padding:12px 26px;border-radius:100px" href="/about-us">{esc(t["home_about_link"])} {arrow}</a></p>
  </div>
 </section>
 
@@ -577,16 +586,7 @@ def home_page(lang):
  </div>
 </section>
 
-<section class="sec" id="about">
- <div class="wrap">
-  <div class="sec-head"><div class="eyebrow">{esc(t["home_about_eyebrow"])}</div><h2>{esc(t["home_about_h"])}</h2></div>
-  <div class="home-about">{about_ps}</div>
-  <div class="vibes">{vibe}</div>
-  <p style="text-align:center;margin-top:26px"><a class="btn btn-dark" style="width:auto;padding:12px 26px;border-radius:100px" href="/about-us">{esc(t["home_about_link"])} {arrow}</a></p>
- </div>
-</section>
-
-<section class="sec sec-white" id="faq">
+<section class="sec" id="faq">
  <div class="wrap">
   <div class="sec-head"><div class="eyebrow">{esc(t["faq_eyebrow"])}</div><h2>{esc(t["faq_h"])}</h2></div>
   <div class="faqs">{faq}</div>

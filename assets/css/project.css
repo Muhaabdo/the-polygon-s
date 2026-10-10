@@ -129,10 +129,10 @@ ul{list-style:none}
 .feats.feats-2{grid-template-columns:repeat(2,1fr);max-width:980px;margin-inline:auto;margin-top:22px}
 @media (max-width:760px){.dstats{grid-template-columns:repeat(2,1fr)}.feats.feats-2{grid-template-columns:1fr}}
 #about .home-about{color:#3d4239}
-#about .vibe{background:#fff;border-color:var(--line);box-shadow:var(--shadow)}
+#about .vibe{background:var(--ivory);border-color:var(--line);box-shadow:var(--shadow)}
 #about .vibe h3{color:var(--em)}#about .vibe p{color:var(--muted)}
 .faqs{max-width:820px;margin:0 auto;display:grid;gap:10px}
-.faq{background:var(--ivory);border:1px solid var(--line);border-radius:14px;padding:0 18px}
+.faq{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0 18px}
 .faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 0;font-weight:800;color:var(--em);font-size:15px}
 .faq summary::-webkit-details-marker{display:none}
 .faq summary .ic{font-size:12px;color:var(--gold);transition:transform .25s}
