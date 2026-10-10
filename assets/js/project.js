@@ -10,7 +10,6 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var RTL = document.documentElement.dir === "rtl";
-  var DESKTOP = !!(window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches);
 
   /* ---------------- Tracking ---------------- */
   window.dataLayer = window.dataLayer || [];
@@ -303,31 +302,13 @@
       };
       track("generate_lead", { form_location: loc, unit_type: unit, phone_country: ph.country.iso, project: project });
 
-      /* Desktop: WhatsApp opens in a NEW tab so the thank-you page stays in front of the visitor.
-         A new tab can only be opened during the click itself (browsers block it later), so it is
-         opened blank now and pointed at WhatsApp once the lead is stored. Phones keep the same-tab
-         flow: there WhatsApp opens as an app and the browser tab stays where it was. */
-      var waTab = null;
-      if (DESKTOP && CFG.wa) {
-        try {
-          waTab = window.open("", "_blank");
-          if (waTab) waTab.document.write('<!doctype html><meta charset="utf-8"><title>WhatsApp</title><body style="margin:0;display:flex;align-items:center;justify-content:center;height:100vh;font:16px system-ui;background:#092A21;color:#E4CE9E">' + (T.sending || "…") + "</body>");
-        } catch (err) { waTab = null; }
-      }
       function done() {
-        var opened = false;
-        if (waTab && !waTab.closed) {
-          var msg = project ? (T.waMsg || "").replace("{p}", project).replace("{u}", unit ? " (" + unit + ")" : "") : (T.waMsgGeneric || "");
-          try { waTab.location.href = "https://wa.me/" + CFG.wa + "?text=" + encodeURIComponent(msg); opened = true; } catch (err) {}
-        }
         try {
           sessionStorage.setItem("vibe_lead", JSON.stringify({
             project: project, unit: unit, lang: LANG, cta: loc,
-            back: location.pathname + location.search, backTitle: CFG.backTitle || project, ts: Date.now(),
-            redirected: opened, newTab: opened
+            back: location.pathname + location.search, backTitle: CFG.backTitle || project, ts: Date.now()
           }));
         } catch (err) {}
-        if (opened) track("whatsapp_redirect", { method: "new_tab", unit_type: unit, project: project, form_location: loc });
         location.href = CFG.thankYou || "/thank-you";
       }
       if (!CFG.endpoint) { console.warn("[VIBE] No leads endpoint configured — lead not stored:", lead); return done(); }

@@ -32,7 +32,11 @@
     window.dataLayer.push(p);
   }
 
-  btn.addEventListener("click", function () { cancel(); push("whatsapp_redirect", { method: "button" }); });
+  btn.addEventListener("click", function () {
+    cancel(); btn.classList.remove("pulse");
+    if (lead) { lead.redirected = true; save(); }
+    push("whatsapp_redirect", { method: "button" });
+  });
 
   var timer = null;
   function cancel() { if (timer) { clearTimeout(timer); timer = null; } count.textContent = ""; bar.hidden = true; }
@@ -42,20 +46,33 @@
 
   if (!lead.confirmed) { lead.confirmed = true; save(); push("thank_you_view"); }
 
-  if (lead.newTab) { count.textContent = T.openedNewTab || ""; btn.target = "_blank"; }
+  /* Desktop: WhatsApp goes to a NEW tab so this page stays open. Browsers only allow a new tab
+     that follows a click, so the automatic attempt is usually blocked — then the page simply
+     stays here and the button (a real click) opens WhatsApp in a new tab.
+     Phones: same-tab redirect; WhatsApp opens as an app and the browser stays on this page. */
+  var DESKTOP = !!(window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches);
+  if (DESKTOP) btn.target = "_blank";
+
   if (!lead.redirected) {
     count.textContent = T.redirecting || "";
     bar.querySelector("i").style.transitionDuration = REDIRECT_MS + "ms";
     requestAnimationFrame(function () { bar.classList.add("run"); });
     timer = setTimeout(function () {
+      timer = null;
       lead.redirected = true; save();
-      push("whatsapp_redirect", { method: "auto" });
-      count.textContent = T.notOpened || "";
       bar.hidden = true;
-      window.location.href = waUrl;
+      if (DESKTOP) {
+        var w = null;
+        try { w = window.open(waUrl, "_blank"); } catch (e) {}
+        if (w) { push("whatsapp_redirect", { method: "auto_new_tab" }); count.textContent = T.openedNewTab || ""; }
+        else { count.textContent = T.clickToOpen || ""; btn.classList.add("pulse"); }
+      } else {
+        push("whatsapp_redirect", { method: "auto" });
+        count.textContent = T.notOpened || "";
+        window.location.href = waUrl;
+      }
     }, REDIRECT_MS);
   } else {
     bar.hidden = true;
   }
-  if (window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches) btn.target = "_blank";
 })();

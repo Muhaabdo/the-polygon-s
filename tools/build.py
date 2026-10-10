@@ -19,7 +19,7 @@ from site_data import SITE, PROJECTS, T  # noqa: E402
 from pages_data import ABOUT, PRIVACY, PRIVACY_EMAIL, MISC  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010m"
+ASSET_V = "20261010n"
 
 
 def ic(name):
@@ -775,7 +775,7 @@ def thank_you(lang):
     alternates = [("ar", url("thank-you", "ar", True)), ("en", url("thank-you", "en", True))]
     cfg = {"lang": lang, "wa": SITE["wa"], "t": {
         "waMsg": t["wa_msg"], "waMsgGeneric": t["wa_msg_generic"], "backTo": t["ty_back"],
-        "redirecting": t["ty_redirecting"], "notOpened": t["ty_not_opened"], "openedNewTab": t["ty_new_tab"],
+        "redirecting": t["ty_redirecting"], "notOpened": t["ty_not_opened"], "openedNewTab": t["ty_new_tab"], "clickToOpen": t["ty_click"],
         "titleGeneric": t["ty_title_generic"], "textGeneric": t["ty_text_generic"], "titleProject": t["ty_title_p"]}}
     html = head(t["ty_seo_title"], t["ty_text_generic"], url("thank-you", lang, True), alternates, lang, t,
                 robots="noindex, nofollow")
