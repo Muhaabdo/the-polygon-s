@@ -1,4 +1,9 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/palm-hills-projects-west", "destination": "/#projects", "permanent": true },
+    { "source": "/palm-hills-projects-east", "destination": "/#projects", "permanent": true },
+    { "source": "/hacienda-ras-al-hekma", "destination": "/#projects", "permanent": true }
+  ]
 }

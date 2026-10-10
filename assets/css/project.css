@@ -1,16 +1,16 @@
 /* VIBE Real Estate — single-project landing pages (hand-authored, no page-builder CSS). */
 
 /* ---------- Fonts (same files the rest of the site uses) ---------- */
-@font-face{font-family:"Almarai";font-weight:300;font-display:swap;src:url(/assets/fonts/d01d60a30930.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
-@font-face{font-family:"Almarai";font-weight:300;font-display:swap;src:url(/assets/fonts/c3fca5d29a3b.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:"Almarai";font-weight:400;font-display:swap;src:url(/assets/fonts/1649000ecb76.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
-@font-face{font-family:"Almarai";font-weight:400;font-display:swap;src:url(/assets/fonts/b15dc8cbfd22.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:"Almarai";font-weight:700;font-display:swap;src:url(/assets/fonts/38a4b645fee6.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
-@font-face{font-family:"Almarai";font-weight:700;font-display:swap;src:url(/assets/fonts/f347d8f3fcaf.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:"Almarai";font-weight:800;font-display:swap;src:url(/assets/fonts/1bb1cfab86e9.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
-@font-face{font-family:"Almarai";font-weight:800;font-display:swap;src:url(/assets/fonts/1fe1abb1be44.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:"El Messiri";font-weight:500 700;font-display:swap;src:url(/assets/fonts/1b5822cd569a.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
-@font-face{font-family:"El Messiri";font-weight:500 700;font-display:swap;src:url(/assets/fonts/a4f25685dbae.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Almarai";font-weight:300;font-display:swap;src:url(/assets/fonts/almarai-300-ar.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Almarai";font-weight:300;font-display:swap;src:url(/assets/fonts/almarai-300-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Almarai";font-weight:400;font-display:swap;src:url(/assets/fonts/almarai-400-ar.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Almarai";font-weight:400;font-display:swap;src:url(/assets/fonts/almarai-400-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Almarai";font-weight:700;font-display:swap;src:url(/assets/fonts/almarai-700-ar.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Almarai";font-weight:700;font-display:swap;src:url(/assets/fonts/almarai-700-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Almarai";font-weight:800;font-display:swap;src:url(/assets/fonts/almarai-800-ar.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Almarai";font-weight:800;font-display:swap;src:url(/assets/fonts/almarai-800-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"El Messiri";font-weight:500 700;font-display:swap;src:url(/assets/fonts/elmessiri-ar.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"El Messiri";font-weight:500 700;font-display:swap;src:url(/assets/fonts/elmessiri-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 
 /* ---------- Tokens ---------- */
 :root{
@@ -147,6 +147,25 @@ ul{list-style:none}
 .hero-plain{background:radial-gradient(900px 500px at 80% 0%,rgba(198,161,91,.16),transparent 60%),linear-gradient(160deg,var(--em-deep) 0%,#14553f 100%)}
 .hero-plain::after{background:none}
 .hero-plain::before{content:"";position:absolute;inset-inline-end:-120px;bottom:-120px;width:420px;height:420px;border:1px solid rgba(198,161,91,.22);border-radius:50%}
+
+.hero-sm{min-height:0;padding:64px 20px 70px}
+.prose{max-width:820px;margin:0 auto;font-size:15.5px;line-height:2;color:#3d4239}
+.prose-center{text-align:center}
+.prose p+p{margin-top:12px}
+.prose h2{font-family:var(--head);color:var(--em);font-size:23px;line-height:1.4;margin:34px 0 10px;padding-inline-start:14px;border-inline-start:3px solid var(--gold)}
+.prose ul{list-style:disc;padding-inline-start:22px;margin:8px 0 12px}
+.prose li{margin:4px 0}
+.prose a{color:var(--em);font-weight:700}
+.prose-box{margin-top:34px;background:var(--ivory);border:1px solid rgba(198,161,91,.45);border-radius:16px;padding:20px 22px}
+.prose-box h3{font-family:var(--head);color:var(--em);font-size:19px}
+.prose-date{margin-top:18px;font-size:13px;color:var(--muted)}
+.mv{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.mv-card{background:#fff;border-radius:var(--radius);padding:26px 24px;box-shadow:var(--shadow)}
+.mv-card h3{font-family:var(--head);font-size:22px;color:var(--em);margin-bottom:8px}
+.mv-card p{font-size:14.5px;color:#3d4239;line-height:1.95}
+.mv-dark{background:linear-gradient(150deg,var(--em-deep),var(--em))}
+.mv-dark h3{color:var(--gold)}.mv-dark p{color:rgba(246,243,236,.88)}
+@media (max-width:760px){.mv{grid-template-columns:1fr}}
 
 /* ---------- Sections ---------- */
 .sec{padding:72px 0 80px;position:relative}

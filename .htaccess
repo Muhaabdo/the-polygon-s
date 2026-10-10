@@ -1,12 +1,13 @@
-# Serve every page without its .html extension (e.g. /about-us instead of
-# /about-us.html), and send anyone who still hits the .html URL directly
-# (old links, browser history, search engines) to the clean version instead
-# of serving duplicate content at two URLs.
-
 RewriteEngine On
 
-# Build scripts are not part of the public site.
-RewriteRule ^tools/ - [F,L]
+# Build scripts, source data and future-project image sources are not part of the public site.
+RewriteRule ^(tools|data)/ - [F,L]
+RewriteRule ^assets/img/_future/ - [F,L]
+
+# Old pages (removed Oct 2026) -> new home
+RewriteRule ^palm-hills-projects-west(\.html)?/?$ /#projects [R=301,L,NE]
+RewriteRule ^palm-hills-projects-east(\.html)?/?$ /#projects [R=301,L,NE]
+RewriteRule ^hacienda-ras-al-hekma(\.html)?/?$ /#projects [R=301,L,NE]
 
 # If the request already resolves to a real file or directory, leave it alone
 # (assets, images, this file itself, etc.).
@@ -14,7 +15,7 @@ RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# /page.html -> /page (visible redirect, so links/bookmarks update)
+# /page.html -> /page (visible redirect, so old links and search engines land on one URL)
 RewriteCond %{THE_REQUEST} \s/+([^?\s]+)\.html[\s?] [NC]
 RewriteRule ^ /%1 [R=301,L,NE]
 
@@ -22,4 +23,14 @@ RewriteRule ^ /%1 [R=301,L,NE]
 RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^([^.]+)$ $1.html [L]
 
-# Custom 404 fallback (optional) could go here.
+ErrorDocument 404 /404.html
+
+# Long cache for versioned static assets
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp "access plus 6 months"
+  ExpiresByType image/svg+xml "access plus 6 months"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+</IfModule>

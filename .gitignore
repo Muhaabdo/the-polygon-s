@@ -1,14 +1,17 @@
-# Original SingleFile page captures used as source material for extraction —
-# large one-off dumps, not needed to build or deploy the site.
-*viberealestatre.com*.html
+# Price sheets and other source data — kept locally only (the repo is public).
+/data/
+*.xlsx
 
-# Build pipeline (source-extraction scripts + intermediate files) — kept locally only.
-# The deployed site is the repo root; this never needs to ship with it.
+# Raw image drops waiting to be processed into assets/img/projects/<slug>/
+*-src/
+
+# Old page captures and one-off build leftovers
+*viberealestatre.com*.html
 /build_tmp/
+
+# Python cache
+__pycache__/
 
 # OS junk
 Thumbs.db
 .DS_Store
-
-# Python cache
-__pycache__/

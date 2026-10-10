@@ -16,9 +16,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 from site_data import SITE, PROJECTS, T  # noqa: E402
+from pages_data import ABOUT, PRIVACY, PRIVACY_EMAIL, MISC  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010i"
+ASSET_V = "20261010j"
 
 
 def ic(name):
@@ -135,8 +136,8 @@ def footer(lang, t):
   <div class="ft-bot">
    <div>© <span id="year">2026</span> VIBE Real Estate — {esc(t["ft_rights"])}</div>
    <ul class="ft-links">
-    <li><a href="/about-us">{esc(t["ft_about"])}</a></li>
-    <li><a href="/privacy-policy">{esc(t["ft_priv"])}</a></li>
+    <li><a href="{url("about-us", lang)}">{esc(t["ft_about"])}</a></li>
+    <li><a href="{url("privacy-policy", lang)}">{esc(t["ft_priv"])}</a></li>
    </ul>
   </div>
  </div>
@@ -273,8 +274,8 @@ def head(title, desc, canonical, alternates, lang, t, og_img=None, robots="max-i
 <meta property="og:description" content="{esc(desc)}">
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(desc)}">
-{og}<link rel="icon" href="/assets/img/9d3f36778e2c.svg" type="image/svg+xml">
-<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/{"38a4b645fee6" if lang == "ar" else "f347d8f3fcaf"}.woff2">
+{og}<link rel="icon" href="/assets/img/brand/favicon.svg" type="image/svg+xml">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/almarai-700-{"ar" if lang == "ar" else "latin"}.woff2">
 {pre}<link rel="stylesheet" href="/assets/css/project.css?v={ASSET_V}">
 {ldtag}</head>
 <body>
@@ -556,7 +557,7 @@ def home_page(lang):
   <div class="sec-head"><div class="eyebrow">{esc(t["home_about_eyebrow"])}</div><h2>{esc(t["home_about_h"])}</h2></div>
   <div class="home-about">{about_ps}</div>
   <div class="vibes">{vibe}</div>
-  <p style="text-align:center;margin-top:26px"><a class="btn btn-dark" style="width:auto;padding:12px 26px;border-radius:100px" href="/about-us">{esc(t["home_about_link"])} {arrow}</a></p>
+  <p style="text-align:center;margin-top:26px"><a class="btn btn-dark" style="width:auto;padding:12px 26px;border-radius:100px" href="{url("about-us", lang)}">{esc(t["home_about_link"])} {arrow}</a></p>
  </div>
 </section>
 
@@ -624,6 +625,145 @@ def home_page(lang):
     return html
 
 
+def simple_shell(lang, t, slug, title, desc, body, robots="max-image-preview:large", ld=None, alternates=True):
+    """Shared chrome for the About / Privacy / 404 pages: nav, footer, contact modal, cookie notice."""
+    m = MISC[lang]
+    alts = [("ar", url(slug, "ar", True)), ("en", url(slug, "en", True)), ("x-default", url(slug, "ar", True))] if alternates else []
+    cfg = {"lang": lang, "project": "", "projectName": SITE["brand"], "pickProject": True, "backTitle": t["home_back"],
+           "endpoint": SITE["endpoint"], "thankYou": url("thank-you", lang),
+           "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"]}}
+    nav_links = "".join(f'<a href="{h}">{esc(x)}</a>' for h, x in m["nav"])
+    html = head(title, desc, url(slug, lang, True), alts, lang, t, robots=robots, ld=ld)
+    html += f'''{lang_bar(slug, lang, t) if alternates else ""}
+<header class="nav">
+ <div class="wrap">
+  <a class="logo" href="{url("", lang)}" aria-label="VIBE Real Estate"><strong>VIBE <span>Real Estate</span></strong><small>Luxury Properties</small></a>
+  <nav class="nav-links" aria-label="{esc(t["menu"])}">{nav_links}</nav>
+  <button class="btn btn-cta" type="button" data-cta="nav">{ic("whatsapp")} {esc(t["home_nav_cta"])}</button>
+  <button class="nav-burger" type="button" aria-label="{esc(t["menu"])}" aria-expanded="false">{ic("bars")}</button>
+ </div>
+</header>
+
+<main>
+{body}
+</main>
+
+{footer(lang, t)}
+
+<div class="modal" id="leadModal" role="dialog" aria-modal="true" aria-labelledby="leadTitle">
+ <div class="modal-box">
+  <button class="modal-x" type="button" data-modal-close aria-label="{esc(t["close"])}">{ic("x")}</button>
+  <div class="modal-head">
+   <div class="modal-wa">{ic("whatsapp")}</div>
+   <h2 id="leadTitle">{esc(t["f_title"])}</h2>
+   <p>{esc(t["f_sub"])}</p>
+   <span class="modal-ctx"></span>
+  </div>
+  <div class="modal-body">{lead_form(None, t, "modal", uid="m")}</div>
+ </div>
+</div>
+
+{cookie(t)}
+
+<script>window.VIBE={json.dumps(cfg, ensure_ascii=False)};</script>
+<script src="/assets/js/countries.js?v={ASSET_V}" defer></script>
+<script src="/assets/js/project.js?v={ASSET_V}" defer></script>
+</body>
+</html>
+'''
+    return html
+
+
+def page_hero(eyebrow, h1, sub):
+    return f'''<section class="hero hero-plain hero-sm">
+ <div class="hero-in">
+  <div class="eyebrow">{esc(eyebrow)}</div>
+  <h1 class="hero-h1-ar">{esc(h1)}</h1>
+  <p class="hero-sub">{esc(sub)}</p>
+ </div>
+</section>'''
+
+
+def about_page(lang):
+    t, a = T[lang], ABOUT[lang]
+    arrow = ic("arrow-l" if t["dir"] == "rtl" else "arrow-r")
+    intro = "".join(f"<p>{esc(x)}</p>" for x in a["intro"])
+    letters = "".join(f'<div class="vibe"><b>{l}</b><h3>{esc(n)}</h3><p>{esc(d)}</p></div>' for l, n, d in a["letters"])
+    values = "".join(f'<div class="feat"><div class="feat-ic">{ic(i)}</div><div><h3>{esc(h)}</h3><p>{esc(d)}</p></div></div>' for i, h, d in a["values"])
+    body = f'''{page_hero(a["eyebrow"], a["h1"], a["sub"])}
+<section class="sec sec-white">
+ <div class="wrap"><div class="prose prose-center">{intro}</div></div>
+</section>
+<section class="sec sec-dark">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(a["name_eyebrow"])}</div><h2>{esc(a["name_h"])}</h2><p>{esc(a["name_p"])}</p></div>
+  <div class="vibes">{letters}</div>
+ </div>
+</section>
+<section class="sec">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(a["values_eyebrow"])}</div><h2>{esc(a["values_h"])}</h2></div>
+  <div class="feats" style="margin-top:0">{values}</div>
+  <div class="mv">
+   <div class="mv-card mv-dark"><h3>{esc(a["mission_h"])}</h3><p>{esc(a["mission"])}</p></div>
+   <div class="mv-card"><h3>{esc(a["vision_h"])}</h3><p>{esc(a["vision"])}</p></div>
+  </div>
+  <p class="disclaimer">{ic("info")}<span>{esc(a["note"])}</span></p>
+  <p style="text-align:center;margin-top:30px"><a class="btn btn-cta btn-lg" href="{url("", lang)}#projects">{esc(t["home_cta2"])} {arrow}</a></p>
+ </div>
+</section>'''
+    org = SITE["domain"] + "/#organization"
+    ld = json.dumps({"@context": "https://schema.org", "@graph": [
+        {"@type": "RealEstateAgent", "@id": org, "name": SITE["brand"], "url": SITE["domain"] + "/", "telephone": SITE["tel_intl"],
+         "description": a["seo_desc"], "address": {"@type": "PostalAddress", "addressLocality": "Cairo", "addressCountry": "EG"}},
+        {"@type": "AboutPage", "url": url("about-us", lang, True), "name": a["seo_title"], "inLanguage": lang, "about": {"@id": org}}]},
+        ensure_ascii=False, indent=1)
+    return simple_shell(lang, t, "about-us", a["seo_title"], a["seo_desc"], body, ld=ld)
+
+
+def privacy_page(lang):
+    t, d = T[lang], PRIVACY[lang]
+    out = [f"<p>{esc(d['intro'])}</p>"]
+    for title, blocks in d["sections"]:
+        out.append(f"<h2>{esc(title)}</h2>")
+        for kind, val in blocks:
+            if kind == "p":
+                out.append(f"<p>{esc(val)}</p>")
+            elif kind == "html":
+                out.append(f"<p>{val}</p>")
+            else:
+                out.append("<ul>" + "".join(f"<li>{esc(x)}</li>" for x in val) + "</ul>")
+    body = f'''{page_hero(d["eyebrow"], d["h1"], d["sub"])}
+<section class="sec sec-white">
+ <div class="wrap">
+  <div class="prose">
+   {"".join(out)}
+   <div class="prose-box"><h3>{esc(d["contact_h"])}</h3><p>{esc(d["contact_p"])}</p><p><a class="ltr" href="mailto:{PRIVACY_EMAIL}">{PRIVACY_EMAIL}</a></p></div>
+   <p class="prose-date">{esc(d["updated"])}</p>
+  </div>
+ </div>
+</section>'''
+    return simple_shell(lang, t, "privacy-policy", d["seo_title"], d["seo_desc"], body)
+
+
+def not_found_page():
+    """Single bilingual-agnostic 404 (Arabic, the site default)."""
+    lang = "ar"
+    t, m = T[lang], MISC[lang]
+    body = f'''<section class="hero hero-plain">
+ <div class="hero-in">
+  <div class="eyebrow">404</div>
+  <h1 class="hero-h1-ar">{esc(m["nf_h"])}</h1>
+  <p class="hero-sub">{esc(m["nf_p"])}</p>
+  <div class="hero-btns" style="margin-top:26px">
+   <a class="btn btn-cta btn-lg" href="/">{esc(m["nf_cta"])}</a>
+   <a class="btn btn-ghost" href="/#projects">{esc(m["nf_cta2"])}</a>
+  </div>
+ </div>
+</section>'''
+    return simple_shell(lang, t, "404", m["nf_title"], m["nf_p"], body, robots="noindex", alternates=False)
+
+
 def thank_you(lang):
     t = T[lang]
     alternates = [("ar", url("thank-you", "ar", True)), ("en", url("thank-you", "en", True))]
@@ -671,8 +811,10 @@ def sitemap():
     home_alts = "".join(f'<xhtml:link rel="alternate" hreflang="{h}" href="{url("", l, True)}"/>' for h, l in (("ar", "ar"), ("en", "en"), ("x-default", "ar")))
     for l in LANGS:
         out.append(f"  <url><loc>{url('', l, True)}</loc><lastmod>{today}</lastmod>{home_alts}</url>")
-    for path in ["/palm-hills-projects-west", "/palm-hills-projects-east", "/hacienda-ras-al-hekma", "/about-us", "/privacy-policy"]:
-        out.append(f"  <url><loc>{SITE['domain']}{path}</loc></url>")
+    for slug in ("about-us", "privacy-policy"):
+        alts = "".join(f'<xhtml:link rel="alternate" hreflang="{h}" href="{url(slug, l, True)}"/>' for h, l in (("ar", "ar"), ("en", "en"), ("x-default", "ar")))
+        for l in LANGS:
+            out.append(f"  <url><loc>{url(slug, l, True)}</loc><lastmod>{today}</lastmod>{alts}</url>")
     for slug, p in PROJECTS.items():
         if not p.get("ready"):
             continue
@@ -696,6 +838,9 @@ def main():
     for lang in LANGS:
         write("en/thank-you.html" if lang == "en" else "thank-you.html", thank_you(lang))
         write("en/index.html" if lang == "en" else "index.html", home_page(lang))
+        write("en/about-us.html" if lang == "en" else "about-us.html", about_page(lang))
+        write("en/privacy-policy.html" if lang == "en" else "privacy-policy.html", privacy_page(lang))
+    write("404.html", not_found_page())
 
 
 if __name__ == "__main__":
