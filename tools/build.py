@@ -18,7 +18,7 @@ sys.path.insert(0, HERE)
 from site_data import SITE, PROJECTS, T  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261010e"
+ASSET_V = "20261010g"
 
 
 def ic(name):
@@ -500,6 +500,22 @@ def home_page(lang):
    </a>''' for m in t["home_more"])
     vibe = "".join(f'<div class="vibe"><b>{l}</b><h3>{esc(n)}</h3><p>{esc(d)}</p></div>' for l, n, d in t["home_vibe"])
     about_ps = "".join(f"<p>{esc(x)}</p>" for x in t["home_about"])
+    rows = ""
+    for sl, o in PROJECTS.items():
+        if not o.get("ready"):
+            continue
+        offer = t["cmp_off"].format(p=o["discount"]["pct"]) if o["discount"] else t["cmp_none"]
+        c = t["cmp_cols"]
+        rows += (f'<tr><th scope="row"><a href="{url(sl, lang)}">{esc(o["title"])}</a></th>'
+                 f'<td data-l="{esc(c[1])}">{esc(" · ".join(o["types"][lang]))}</td>'
+                 f'<td data-l="{esc(c[2])}"><span><b class="num">{money(o["price_from"])}</b> {esc(t["egp"])}</span></td>'
+                 f'<td data-l="{esc(c[3])}">{o["down"]}%</td><td data-l="{esc(c[4])}">{esc(t["cmp_years"].format(y=o["years"]))}</td>'
+                 f'<td data-l="{esc(c[5])}">{o["delivery"]}</td><td data-l="{esc(c[6])}">{esc(offer)}</td></tr>')
+    cmp_head = "".join(f'<th scope="col">{esc(x)}</th>' for x in t["cmp_cols"])
+    dev_stats = "".join(f'<div class="dstat"><b>{esc(v)}</b><span>{esc(k)}</span></div>' for v, k in t["dev_stats"])
+    why = "".join(f'<div class="feat"><div class="feat-ic">{ic(i)}</div><div><h3>{esc(h)}</h3><p>{esc(d)}</p></div></div>' for i, h, d in t["why"])
+    faq = "".join(f'<details class="faq"><summary>{esc(q)}{ic("chev-d")}</summary><p>{esc(a_)}</p></details>' for q, a_ in t["faq"])
+    faq_ld = {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a_}} for q, a_ in t["faq"]]}
     items = [{"@type": "ListItem", "position": i + 1, "name": o["title"], "url": url(s, lang, True)}
              for i, (s, o) in enumerate(PROJECTS.items()) if o.get("ready")]
     org = SITE["domain"] + "/#organization"
@@ -507,7 +523,7 @@ def home_page(lang):
         {"@type": "RealEstateAgent", "@id": org, "name": SITE["brand"], "url": SITE["domain"] + "/", "telephone": SITE["tel_intl"],
          "image": SITE["domain"] + hero_img, "address": {"@type": "PostalAddress", "addressLocality": "Cairo", "addressCountry": "EG"}},
         {"@type": "WebSite", "@id": SITE["domain"] + "/#website", "url": SITE["domain"] + "/", "name": SITE["brand"], "inLanguage": ["ar", "en"], "publisher": {"@id": org}},
-        {"@type": "ItemList", "name": t["home_h1"], "itemListElement": items}]}, ensure_ascii=False, indent=1)
+        {"@type": "ItemList", "name": t["home_h1"], "itemListElement": items}, faq_ld]}, ensure_ascii=False, indent=1)
     html = head(t["home_seo_title"], t["home_seo_desc"], url("", lang, True), alternates, lang, t,
                 og_img=SITE["domain"] + hero_img, preload=hero_img, ld=ld)
     html += f'''{lang_bar("", lang, t)}
@@ -515,7 +531,7 @@ def home_page(lang):
  <div class="wrap">
   <a class="logo" href="{url("", lang)}" aria-label="VIBE Real Estate"><strong>VIBE <span>Real Estate</span></strong><small>Luxury Properties</small></a>
   <nav class="nav-links" aria-label="{esc(t["menu"])}">{nav_links}</nav>
-  <button class="btn btn-cta" type="button" data-cta="nav">{ic("whatsapp")} {esc(t["nav_cta"])}</button>
+  <button class="btn btn-cta" type="button" data-cta="nav">{ic("whatsapp")} {esc(t["home_nav_cta"])}</button>
   <button class="nav-burger" type="button" aria-label="{esc(t["menu"])}" aria-expanded="false">{ic("bars")}</button>
  </div>
 </header>
@@ -530,7 +546,7 @@ def home_page(lang):
   <div class="hero-stats">{stats}</div>
   <div class="hero-btns">
    <a class="btn btn-cta btn-lg" href="#projects">{esc(t["home_cta2"])}</a>
-   <button class="btn btn-ghost" type="button" data-cta="hero">{ic("whatsapp")} {esc(t["cta_main"])}</button>
+   <a class="btn btn-ghost" href="#compare">{esc(t["home_nav"][1][1])}</a>
   </div>
  </div>
 </section>
@@ -545,36 +561,38 @@ def home_page(lang):
  </div>
 </section>
 
-<section class="sec sec-white" id="more">
+<section class="sec sec-white" id="compare">
  <div class="wrap">
-  <div class="sec-head"><div class="eyebrow">{esc(t["home_more_eyebrow"])}</div><h2>{esc(t["home_more_h"])}</h2><p>{esc(t["home_more_p"])}</p></div>
-  <div class="cards cards-2 others">{more}</div>
+  <div class="sec-head"><div class="eyebrow">{esc(t["cmp_eyebrow"])}</div><h2>{esc(t["cmp_h"])}</h2><p>{esc(t["cmp_p"])}</p></div>
+  <div class="cmp"><table><thead><tr>{cmp_head}</tr></thead><tbody>{rows}</tbody></table></div>
  </div>
 </section>
 
-<section class="sec sec-dark" id="about">
+<section class="sec sec-dark" id="developer">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(t["dev_eyebrow"])}</div><h2>{esc(t["dev_h"])}</h2><p>{esc(t["dev_p"])}</p></div>
+  <div class="dstats">{dev_stats}</div>
+  <h3 class="sub-h">{esc(t["why_h"])}</h3>
+  <div class="feats feats-2">{why}</div>
+ </div>
+</section>
+
+<section class="sec" id="about">
  <div class="wrap">
   <div class="sec-head"><div class="eyebrow">{esc(t["home_about_eyebrow"])}</div><h2>{esc(t["home_about_h"])}</h2></div>
   <div class="home-about">{about_ps}</div>
   <div class="vibes">{vibe}</div>
-  <p style="text-align:center;margin-top:26px"><a class="btn btn-ghost" href="/about-us">{esc(t["home_about_link"])} {arrow}</a></p>
+  <p style="text-align:center;margin-top:26px"><a class="btn btn-dark" style="width:auto;padding:12px 26px;border-radius:100px" href="/about-us">{esc(t["home_about_link"])} {arrow}</a></p>
  </div>
 </section>
 
-<section class="sec" id="contact" style="background:linear-gradient(160deg,var(--em-deep),var(--em))">
+<section class="sec sec-white" id="faq">
  <div class="wrap">
-  <div class="final">
-   <div>
-    <div class="eyebrow">VIBE Real Estate</div>
-    <h2>{t["home_final_h"]}</h2>
-    <p class="final-lead">{esc(t["home_final_lead"])}</p>
-    <ul class="final-points">{"".join(f"<li>{ic('check')} {esc(x)}</li>" for x in t["final_points"])}</ul>
-    <a class="final-call" href="tel:{SITE["tel"]}" data-track="call_click" data-loc="final">{ic("phone")} {esc(t["final_call"])}<span class="ltr">{SITE["tel"]}</span></a>
-   </div>
-   <div class="final-card">
-    <h3>{esc(t["final_form_h"])}</h3>
-    {lead_form(None, t, "final_form", inline=True, uid="f")}
-   </div>
+  <div class="sec-head"><div class="eyebrow">{esc(t["faq_eyebrow"])}</div><h2>{esc(t["faq_h"])}</h2></div>
+  <div class="faqs">{faq}</div>
+  <div class="soft">
+   <div><h3>{esc(t["soft_h"])}</h3><p>{esc(t["soft_p"])}</p></div>
+   <button class="btn btn-cta" type="button" data-cta="contact_strip">{ic("whatsapp")} {esc(t["soft_cta"])}</button>
   </div>
  </div>
 </section>
