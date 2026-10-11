@@ -16,10 +16,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 from site_data import SITE, PROJECTS, T  # noqa: E402
-from pages_data import ABOUT, PRIVACY, PRIVACY_EMAIL, MISC  # noqa: E402
+from pages_data import ABOUT, PRIVACY, PRIVACY_EMAIL, MISC, HUB, HUB_SLUG  # noqa: E402
 
 LANGS = ("ar", "en")
-ASSET_V = "20261011b"
+ASSET_V = "20261011c"
 
 
 def ic(name):
@@ -144,6 +144,7 @@ def footer(lang, t):
   <div class="ft-bot">
    <div>© <span id="year">2026</span> VIBE Real Estate — {esc(t["ft_rights"])}</div>
    <ul class="ft-links">
+    <li><a href="{url(HUB_SLUG, lang)}">{esc(HUB[lang]["crumb"])}</a></li>
     <li><a href="{url("about-us", lang)}">{esc(t["ft_about"])}</a></li>
     <li><a href="{url("privacy-policy", lang)}">{esc(t["ft_priv"])}</a></li>
    </ul>
@@ -315,7 +316,8 @@ def jsonld(slug, p, lang, t):
          "publisher": {"@id": org}, "breadcrumb": {"@id": page + "#breadcrumb"}},
         {"@type": "BreadcrumbList", "@id": page + "#breadcrumb", "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": t["crumb_home"], "item": url("", lang, True)},
-            {"@type": "ListItem", "position": 2, "name": p["title"], "item": page}]},
+            {"@type": "ListItem", "position": 2, "name": HUB[lang]["crumb"], "item": url(HUB_SLUG, lang, True)},
+            {"@type": "ListItem", "position": 3, "name": p["title"], "item": page}]},
         {"@type": "ApartmentComplex", "@id": page + "#project", "name": p["title"], "url": page,
          "description": p["about"][lang][0], "image": hero,
          "address": {"@type": "PostalAddress", "addressLocality": p["area"]["en"], "addressRegion": "Giza", "addressCountry": "EG"}},
@@ -547,6 +549,7 @@ def project_page(slug, lang):
    <button class="car-btn next" type="button" aria-label="next">{ic(next_i)}</button>
    <div class="car-dots"></div>
   </div>
+  <p style="text-align:center;margin-top:22px"><a class="hub-link" href="{url(HUB_SLUG, lang)}">{esc(HUB[lang]["link"])} {ic("arrow-l" if t["dir"] == "rtl" else "arrow-r")}</a></p>
  </div>
 </section>
 
@@ -607,25 +610,8 @@ def project_page(slug, lang):
     return html
 
 
-def home_page(lang):
-    t = T[lang]
-    alternates = [("ar", url("", "ar", True)), ("en", url("", "en", True)), ("x-default", url("", "ar", True))]
-    hero_img = img("palm-parks", "hero")
-    cfg = {"lang": lang, "project": "", "projectName": SITE["brand"], "pickProject": True, "backTitle": t["home_back"],
-           "endpoint": SITE["endpoint"], "thankYou": url("thank-you", lang),
-           "wa": SITE["wa"],
-           "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"],
-                 "waMsg": t["wa_msg"], "waMsgGeneric": t["wa_msg_generic"]}}
-    nav_links = "".join(f'<a href="{h}">{esc(x)}</a>' for h, x in t["home_nav"])
-    stats = "".join(f'<div class="hero-stat"><b>{esc(v)}</b><span>{esc(k)}</span></div>' for v, k in t["home_stats"])
-    arrow = ic("arrow-l" if t["dir"] == "rtl" else "arrow-r")
-    more = "".join(f'''<a class="card" href="{m["href"]}" data-track="project_switch" data-loc="home_more" data-target="{esc(m["title"])}">
-    <div class="card-media"><img src="{img("home", m["img"])}" alt="{esc(m["title"])}" loading="lazy" style="width:100%;height:100%;object-fit:cover"><span class="card-tag">{ic("pin")} {esc(m["tag"])}</span></div>
-    <div class="card-body"><h3 class="card-name">{esc(m["title"])}</h3><p class="card-sub" style="margin:6px 0 14px">{esc(m["text"])}</p>
-     <span class="card-more" style="margin-top:auto">{esc(t["home_explore"])} {arrow}</span></div>
-   </a>''' for m in t["home_more"])
-    vibe = "".join(f'<div class="vibe"><b>{l}</b><h3>{esc(n)}</h3><p>{esc(d)}</p></div>' for l, n, d in t["home_vibe"])
-    about_ps = "".join(f"<p>{esc(x)}</p>" for x in t["home_about"])
+def compare_table(lang, t):
+    """Side-by-side table of every ready project: unit types, starting price, payment plan, delivery, offer."""
     rows = ""
     for sl, o in PROJECTS.items():
         if not o.get("ready"):
@@ -638,6 +624,28 @@ def home_page(lang):
                  f'<td data-l="{esc(c[3])}">{o["down"]}%</td><td data-l="{esc(c[4])}">{esc(t["cmp_years"].format(y=o["years"]))}</td>'
                  f'<td data-l="{esc(c[5])}">{o["delivery"]}</td><td data-l="{esc(c[6])}">{esc(offer)}</td></tr>')
     cmp_head = "".join(f'<th scope="col">{esc(x)}</th>' for x in t["cmp_cols"])
+    return f'<div class="cmp"><table><thead><tr>{cmp_head}</tr></thead><tbody>{rows}</tbody></table></div>'
+
+
+def home_page(lang):
+    t = T[lang]
+    alternates = [("ar", url("", "ar", True)), ("en", url("", "en", True)), ("x-default", url("", "ar", True))]
+    hero_img = img("palm-parks", "hero")
+    cfg = {"lang": lang, "project": "", "projectName": SITE["brand"], "pickProject": True, "backTitle": t["home_back"],
+           "endpoint": SITE["endpoint"], "thankYou": url("thank-you", lang),
+           "wa": SITE["wa"],
+           "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"],
+                 "waMsg": t["wa_msg"], "waMsgGeneric": t["wa_msg_generic"]}}
+    nav_links = "".join(f'<a href="{url(HUB_SLUG, lang) if h == "#compare" else h}">{esc(x)}</a>' for h, x in t["home_nav"])
+    stats = "".join(f'<div class="hero-stat"><b>{esc(v)}</b><span>{esc(k)}</span></div>' for v, k in t["home_stats"])
+    arrow = ic("arrow-l" if t["dir"] == "rtl" else "arrow-r")
+    more = "".join(f'''<a class="card" href="{m["href"]}" data-track="project_switch" data-loc="home_more" data-target="{esc(m["title"])}">
+    <div class="card-media"><img src="{img("home", m["img"])}" alt="{esc(m["title"])}" loading="lazy" style="width:100%;height:100%;object-fit:cover"><span class="card-tag">{ic("pin")} {esc(m["tag"])}</span></div>
+    <div class="card-body"><h3 class="card-name">{esc(m["title"])}</h3><p class="card-sub" style="margin:6px 0 14px">{esc(m["text"])}</p>
+     <span class="card-more" style="margin-top:auto">{esc(t["home_explore"])} {arrow}</span></div>
+   </a>''' for m in t["home_more"])
+    vibe = "".join(f'<div class="vibe"><b>{l}</b><h3>{esc(n)}</h3><p>{esc(d)}</p></div>' for l, n, d in t["home_vibe"])
+    about_ps = "".join(f"<p>{esc(x)}</p>" for x in t["home_about"])
     dev_stats = "".join(f'<div class="dstat"><b>{esc(v)}</b><span>{esc(k)}</span></div>' for v, k in t["dev_stats"])
     why = "".join(f'<div class="feat"><div class="feat-ic">{ic(i)}</div><div><h3>{esc(h)}</h3><p>{esc(d)}</p></div></div>' for i, h, d in t["why"])
     faq = "".join(f'<details class="faq"><summary>{esc(q)}{ic("chev-d")}</summary><p>{esc(a_)}</p></details>' for q, a_ in t["faq"])
@@ -693,14 +701,8 @@ def home_page(lang):
   <div class="cards cards-3 others">
    {other_cards(None, lang, t)}
   </div>
+  <p style="text-align:center;margin-top:26px"><a class="btn btn-dark" style="width:auto;padding:12px 26px;border-radius:100px" href="{url(HUB_SLUG, lang)}">{esc(HUB[lang]["link"])} {arrow}</a></p>
   <p class="disclaimer">{ic("info")}<span>{esc(t["units_disc"])}</span></p>
- </div>
-</section>
-
-<section class="sec sec-white" id="compare">
- <div class="wrap">
-  <div class="sec-head"><div class="eyebrow">{esc(t["cmp_eyebrow"])}</div><h2>{esc(t["cmp_h"])}</h2><p>{esc(t["cmp_p"])}</p></div>
-  <div class="cmp"><table><thead><tr>{cmp_head}</tr></thead><tbody>{rows}</tbody></table></div>
  </div>
 </section>
 
@@ -720,6 +722,220 @@ def home_page(lang):
   <div class="soft">
    <div><h3>{esc(t["soft_h"])}</h3><p>{esc(t["soft_p"])}</p></div>
    <button class="btn btn-cta" type="button" data-cta="contact_strip">{ic("whatsapp")} {esc(t["soft_cta"])}</button>
+  </div>
+ </div>
+</section>
+</main>
+
+{footer(lang, t)}
+
+<div class="modal" id="leadModal" role="dialog" aria-modal="true" aria-labelledby="leadTitle">
+ <div class="modal-box">
+  <button class="modal-x" type="button" data-modal-close aria-label="{esc(t["close"])}">{ic("x")}</button>
+  <div class="modal-head">
+   <div class="modal-wa">{ic("whatsapp")}</div>
+   <h2 id="leadTitle">{esc(t["f_title"])}</h2>
+   <p>{esc(t["f_sub"])}</p>
+   <span class="modal-ctx"></span>
+  </div>
+  <div class="modal-body">{lead_form(None, t, "modal", uid="m")}</div>
+ </div>
+</div>
+
+{cookie(t)}
+
+<script>window.VIBE={json.dumps(cfg, ensure_ascii=False)};</script>
+<script src="/assets/js/countries.js?v={ASSET_V}" defer></script>
+<script src="/assets/js/project.js?v={ASSET_V}" defer></script>
+</body>
+</html>
+'''
+    return html
+
+
+GROUP_KEYS = (("Apartment",), ("Family Home", "Town"), ("Twin", "Villa"))
+
+
+def hub_groups(lang):
+    """For each home-type group: the projects that have it and their lowest price for that type."""
+    out = []
+    for keys in GROUP_KEYS:
+        rows = []
+        for slug, p in PROJECTS.items():
+            if not p.get("ready"):
+                continue
+            units = p["units"] + (p["launch"]["units"] if p.get("launch") else [])
+            prices = [u["price"] for u in units if u.get("price") and any(k.lower() in u["name"].lower() for k in keys)]
+            if prices:
+                rows.append((slug, p, min(prices)))
+        out.append(sorted(rows, key=lambda r: r[2]))
+    return out
+
+
+def hub_faq(lang, t):
+    ar = lang == "ar"
+    ps = [(s, p) for s, p in PROJECTS.items() if p.get("ready")]
+    low_s, low = min(ps, key=lambda x: x[1]["price_from"])
+    sep = "؛ " if ar else "; "
+    groups = hub_groups(lang)
+    names = lambda g: ("، " if ar else ", ").join(r[1]["title"] for r in g)
+    if ar:
+        return [
+            ("إيه مشاريع بالم هيلز أكتوبر المتاحة؟",
+             sep.join(f'{p["title"]} ({"، ".join(p["types"]["ar"])})' for _, p in ps) + ". كلها من تطوير Palm Hills Developments."),
+            ("أسعار بالم هيلز أكتوبر بتبدأ من كام؟",
+             f'الأسعار بتبدأ من {money(low["price_from"])} جنيه في {low["title"]}. بداية كل مشروع: '
+             + sep.join(f'{p["title"]} من {money(p["price_from"])} جنيه' for _, p in ps) + "."),
+            ("إيه أنظمة السداد في مشاريع بالم هيلز أكتوبر؟",
+             "المقدم 5% في كل المشاريع المعروضة. التقسيط: " + sep.join(f'{p["title"]} حتى {p["years"]} سنوات' for _, p in ps) + "."),
+            ("إمتى الاستلام؟", sep.join(f'{p["title"]} {p["delivery"]}' for _, p in ps) + "، حسب المطوّر."),
+            ("فين ألاقي شقق وفين ألاقي فيلات؟",
+             f"الشقق في {names(groups[0])}. الـFamily Homes والتاون هاوس في {names(groups[1])}. التوين هاوس والفيلات في {names(groups[2])}."),
+            ("هل VIBE Real Estate هي المطوّر؟",
+             "لا. المطوّر هو Palm Hills Developments. VIBE Real Estate وسيط عقاري مستقل بيعرض المشاريع وبيساعدك تقارن وتختار، والتعاقد بيتم مع المطوّر مباشرة."),
+            ("هل الأسعار المعروضة نهائية؟",
+             "الأسعار استرشادية وقابلة للتغيير من المطوّر دون إشعار مسبق، والمرجع النهائي هو المطوّر وقت التعاقد."),
+        ]
+    return [
+        ("Which Palm Hills October projects are available?",
+         sep.join(f'{p["title"]} ({", ".join(p["types"]["en"]).lower()})' for _, p in ps) + ". All are developed by Palm Hills Developments."),
+        ("What are the starting prices in Palm Hills October?",
+         f'Prices start from EGP {money(low["price_from"])} in {low["title"]}. By project: '
+         + sep.join(f'{p["title"]} from EGP {money(p["price_from"])}' for _, p in ps) + "."),
+        ("What payment plans are available?",
+         "The down payment is 5% in every project shown. Installments: " + sep.join(f'{p["title"]} up to {p["years"]} years' for _, p in ps) + "."),
+        ("When is delivery?", sep.join(f'{p["title"]} {p["delivery"]}' for _, p in ps) + ", according to the developer."),
+        ("Where can I find apartments, and where villas?",
+         f"Apartments are in {names(groups[0])}. Family homes and town houses are in {names(groups[1])}. Twin houses and villas are in {names(groups[2])}."),
+        ("Is VIBE Real Estate the developer?",
+         "No. The developer is Palm Hills Developments. VIBE Real Estate is an independent broker that presents the projects and helps you compare and choose; contracts are signed directly with the developer."),
+        ("Are the prices shown final?",
+         "Prices are indicative and may be changed by the developer without notice. The developer is the final reference at the time of contracting."),
+    ]
+
+
+def hub_page(lang):
+    """Palm Hills October hub: every project, a comparison, a by-type guide, the area and an FAQ."""
+    t, h = T[lang], HUB[lang]
+    ps = [(s, p) for s, p in PROJECTS.items() if p.get("ready")]
+    n, low = len(ps), min(p["price_from"] for _, p in ps)
+    alternates = [("ar", url(HUB_SLUG, "ar", True)), ("en", url(HUB_SLUG, "en", True)), ("x-default", url(HUB_SLUG, "ar", True))]
+    hero_img = img("crown-extension", "hero")
+    page = url(HUB_SLUG, lang, True)
+    cfg = {"lang": lang, "project": "", "projectName": h["final_name"], "pickProject": True, "backTitle": h["back"],
+           "endpoint": SITE["endpoint"], "thankYou": url("thank-you", lang), "wa": SITE["wa"],
+           "t": {"submit": t["f_submit"], "sending": t["f_sending"], "noCountry": t["no_country"], "close": t["close"],
+                 "waMsg": t["wa_msg"], "waMsgGeneric": t["wa_msg_generic"]}}
+    nav_links = "".join(f'<a href="{hh}">{esc(x)}</a>' for hh, x in h["nav"])
+    stats = "".join(f'<div class="hero-stat"><b>{esc(v.format(n=n))}</b><span>{esc(k)}</span></div>' for v, k in h["stats"])
+    arrow = ic("arrow-l" if t["dir"] == "rtl" else "arrow-r")
+    guide = ""
+    for (icon, name, text), rows in zip(h["groups"], hub_groups(lang)):
+        items = "".join(
+            f'<li><a href="{url(s, lang)}" data-track="project_switch" data-loc="hub_guide" data-target="{esc(p["name"])}">'
+            f'<span>{esc(p["title"])}</span><small>{esc(h["from"])} <b class="num">{money(pr)}</b> {esc(t["egp"])}</small></a></li>'
+            for s, p, pr in rows)
+        guide += (f'<div class="guide"><div class="feat-ic">{ic(icon)}</div><h3>{esc(name)}</h3><p>{esc(text)}</p>'
+                  f'<ul>{items}</ul></div>')
+    area = "".join(f'<div class="feat"><div class="feat-ic">{ic(i)}</div><div><h3>{esc(a)}</h3><p>{esc(d)}</p></div></div>' for i, a, d in h["area"])
+    qa = hub_faq(lang, t)
+    faq = "".join(f'<details class="faq"><summary>{esc(q)}{ic("chev-d")}</summary><p>{esc(a_)}</p></details>' for q, a_ in qa)
+    points = "".join(f"<li>{ic('check')} {esc(x)}</li>" for x in t["final_points"])
+    org = SITE["domain"] + "/#organization"
+    desc = h["seo_desc"].format(price=money(low))
+    ld = json.dumps({"@context": "https://schema.org", "@graph": [
+        {"@type": "RealEstateAgent", "@id": org, "name": SITE["brand"], "url": SITE["domain"] + "/", "telephone": SITE["tel_intl"],
+         "image": SITE["domain"] + hero_img, "address": {"@type": "PostalAddress", "addressLocality": "Cairo", "addressCountry": "EG"}},
+        {"@type": "CollectionPage", "@id": page + "#webpage", "url": page, "name": h["seo_title"], "description": desc,
+         "inLanguage": lang, "publisher": {"@id": org}, "breadcrumb": {"@id": page + "#breadcrumb"}},
+        {"@type": "BreadcrumbList", "@id": page + "#breadcrumb", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": t["crumb_home"], "item": url("", lang, True)},
+            {"@type": "ListItem", "position": 2, "name": h["crumb"], "item": page}]},
+        {"@type": "ItemList", "name": h["h1"], "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": p["title"], "url": url(s, lang, True)} for i, (s, p) in enumerate(ps)]},
+        {"@type": "FAQPage", "@id": page + "#faq", "inLanguage": lang, "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a_}} for q, a_ in qa]},
+    ]}, ensure_ascii=False, indent=1)
+    html = head(h["seo_title"], desc, page, alternates, lang, t,
+                og_img=SITE["domain"] + og_path(PROJECTS["crown-extension"]), preload=hero_img, ld=ld)
+    html += f'''{lang_bar(HUB_SLUG, lang, t)}
+<header class="nav">
+ <div class="wrap">
+  <a class="logo" href="{url("", lang)}" aria-label="VIBE Real Estate"><strong>VIBE <span>Real Estate</span></strong><small>Luxury Properties</small></a>
+  <nav class="nav-links" aria-label="{esc(t["menu"])}">{nav_links}</nav>
+  <button class="btn btn-cta" type="button" data-cta="nav">{ic("whatsapp")} {esc(h["nav_cta"])}</button>
+  {lang_toggle(HUB_SLUG, lang)}
+  <button class="nav-burger" type="button" aria-label="{esc(t["menu"])}" aria-expanded="false">{ic("bars")}</button>
+ </div>
+</header>
+
+<main>
+<section class="hero">
+ <img class="hero-bg" src="{hero_img}" alt="{esc(h["h1"])}" fetchpriority="high">
+ <div class="hero-in">
+  <div class="eyebrow">{esc(h["eyebrow"])}</div>
+  <h1 class="hero-h1-ar">{esc(h["h1"])}</h1>
+  <p class="hero-sub">{esc(h["sub"].format(n=n, price=money(low)))}</p>
+  <div class="hero-stats">{stats}</div>
+  <div class="hero-btns">
+   <button class="btn btn-cta btn-lg" type="button" data-cta="hero">{ic("whatsapp")} {esc(t["cta_main"])}</button>
+   <a class="btn btn-ghost" href="#projects">{esc(h["cta"])}</a>
+  </div>
+ </div>
+</section>
+
+<section class="sec" id="projects">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(h["proj_eyebrow"])}</div><h2>{esc(h["proj_h"])}</h2><p>{esc(h["proj_p"])}</p></div>
+  <div class="cards cards-3 others">
+   {other_cards(None, lang, t)}
+  </div>
+  <p class="disclaimer">{ic("info")}<span>{esc(t["units_disc"])}</span></p>
+ </div>
+</section>
+
+<section class="sec sec-white" id="compare">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(t["cmp_eyebrow"])}</div><h2>{esc(t["cmp_h"])}</h2><p>{esc(t["cmp_p"])}</p></div>
+  {compare_table(lang, t)}
+ </div>
+</section>
+
+<section class="sec" id="guide">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(h["guide_eyebrow"])}</div><h2>{esc(h["guide_h"])}</h2><p>{esc(h["guide_p"])}</p></div>
+  <div class="guides">{guide}</div>
+ </div>
+</section>
+
+<section class="sec sec-dark" id="area">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(h["area_eyebrow"])}</div><h2>{esc(h["area_h"])}</h2><p>{esc(h["area_p"])}</p></div>
+  <div class="feats feats-2">{area}</div>
+ </div>
+</section>
+
+<section class="sec" id="faq">
+ <div class="wrap">
+  <div class="sec-head"><div class="eyebrow">{esc(t["faq_eyebrow"])}</div><h2>{esc(h["faq_h"])}</h2></div>
+  <div class="faqs">{faq}</div>
+ </div>
+</section>
+
+<section class="sec sec-dark" id="contact">
+ <div class="wrap">
+  <div class="final">
+   <div>
+    <div class="eyebrow">VIBE Real Estate</div>
+    <h2>{t["final_h"].format(t=esc(h["final_name"]))}</h2>
+    <p class="final-lead">{esc(t["final_lead"])}</p>
+    <ul class="final-points">{points}</ul>
+    <a class="final-call" href="tel:{SITE["tel"]}" data-track="call_click" data-loc="final">{ic("phone")} {esc(t["final_call"])}<span class="ltr">{SITE["tel"]}</span></a>
+   </div>
+   <div class="final-card">
+    <h3>{esc(t["final_form_h"])}</h3>
+    {lead_form(None, t, "final_form", inline=True, uid="f")}
+   </div>
   </div>
  </div>
 </section>
@@ -940,7 +1156,7 @@ def sitemap():
     home_alts = "".join(f'<xhtml:link rel="alternate" hreflang="{h}" href="{url("", l, True)}"/>' for h, l in (("ar", "ar"), ("en", "en"), ("x-default", "ar")))
     for l in LANGS:
         out.append(f"  <url><loc>{url('', l, True)}</loc><lastmod>{today}</lastmod>{home_alts}</url>")
-    for slug in ("about-us", "privacy-policy"):
+    for slug in (HUB_SLUG, "about-us", "privacy-policy"):
         alts = "".join(f'<xhtml:link rel="alternate" hreflang="{h}" href="{url(slug, l, True)}"/>' for h, l in (("ar", "ar"), ("en", "en"), ("x-default", "ar")))
         for l in LANGS:
             out.append(f"  <url><loc>{url(slug, l, True)}</loc><lastmod>{today}</lastmod>{alts}</url>")
@@ -975,7 +1191,8 @@ def llms_txt():
     out += ["", "## Company", "",
             f'- [About VIBE Real Estate]({url("about-us", "en", True)}): who we are and how we work as an independent broker.',
             f'- [Privacy policy]({url("privacy-policy", "en", True)}): how enquiry data is collected and used.',
-            f'- [Home]({url("", "en", True)}): all projects, a side-by-side comparison and general questions.', ""]
+            f'- [Palm Hills October projects]({url(HUB_SLUG, "en", True)}): all five projects, a side-by-side price comparison and a guide by home type.',
+            f'- [Home]({url("", "en", True)}): who VIBE is, the projects and general questions.', ""]
     for slug, p in PROJECTS.items():
         if not p.get("ready"):
             continue
@@ -1004,6 +1221,7 @@ def main():
     for lang in LANGS:
         write("en/thank-you.html" if lang == "en" else "thank-you.html", thank_you(lang))
         write("en/index.html" if lang == "en" else "index.html", home_page(lang))
+        write(f"en/{HUB_SLUG}.html" if lang == "en" else f"{HUB_SLUG}.html", hub_page(lang))
         write("en/about-us.html" if lang == "en" else "about-us.html", about_page(lang))
         write("en/privacy-policy.html" if lang == "en" else "privacy-policy.html", privacy_page(lang))
     write("404.html", not_found_page())

@@ -446,3 +446,20 @@ ul{list-style:none}
 .ty-bar.run i{transition:transform linear;transform:scaleX(1)}
 .ty-back{display:inline-flex;align-items:center;gap:8px;margin-top:18px;color:var(--em);font-weight:800;font-size:14px;text-decoration:none}
 .ty-back:hover{color:var(--gold)}
+
+/* ---------- Palm Hills October hub ---------- */
+.guides{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.guide{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.guide .feat-ic{margin-bottom:14px}
+.guide h3{font-family:var(--head);color:var(--em);font-size:21px;line-height:1.4}
+.guide>p{color:var(--muted);font-size:14px;line-height:1.8;margin:6px 0 14px}
+.guide ul{list-style:none;margin-top:auto;display:grid;gap:8px}
+.guide li a{display:flex;justify-content:space-between;align-items:center;gap:12px;text-decoration:none;background:var(--ivory);border:1px solid var(--line);border-radius:12px;padding:11px 14px;transition:border-color .2s}
+.guide li a:hover{border-color:var(--gold)}
+.guide li span{font-weight:800;color:var(--em);font-size:14.5px}
+.guide li small{color:var(--muted);font-size:12.5px;white-space:nowrap}
+.guide li small b{color:var(--gold);font-size:14px}
+@media (max-width:900px){.guides{grid-template-columns:1fr}}
+.hub-link{color:var(--em);font-weight:800;font-size:14.5px;text-decoration:none;border-bottom:2px solid var(--gold);padding-bottom:3px;display:inline-flex;align-items:center;gap:8px}
+.hub-link:hover{color:var(--gold)}
+.hub-link .ic{font-size:12px}
