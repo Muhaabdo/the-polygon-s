@@ -18,6 +18,7 @@ D = SITE["domain"]
 CAMPAIGN = "VIBE | Search | Palm Hills October"
 BUDGET = 500          # EGP/day — PLACEHOLDER, set the real figure before enabling
 HUB = "palm-hills-october"
+LOCATIONS = ["Egypt", "Saudi Arabia", "United Arab Emirates", "Oman", "Qatar", "Bahrain", "Kuwait"]
 
 
 def m(n):             # 13144000 -> "13.1"
@@ -232,7 +233,8 @@ def editor_csv(path):
     r = lambda **k: rows.append({**{c: "" for c in cols}, "Campaign": CAMPAIGN, **k})
     r(**{"Campaign Type": "Search", "Networks": "Google search", "Budget": BUDGET, "Budget type": "Daily",
          "Bid Strategy Type": "Maximize clicks", "Languages": "ar;en", "Campaign Status": "Paused"})
-    r(**{"Location": "Egypt"})
+    for loc in LOCATIONS:
+        r(**{"Location": loc})
     for vals in NEGATIVES.values():
         for k in vals:
             r(**{"Keyword": k, "Criterion Type": "Campaign Negative Phrase"})
@@ -292,7 +294,7 @@ def workbook(path):
             ("Type / network", "Search — Google search only", "Search partners and Display off."),
             ("Daily budget (EGP)", BUDGET, "PLACEHOLDER. Replace with the real daily budget before enabling."),
             ("Bidding", "Maximize clicks", "Start here with a max CPC limit; switch to Maximize conversions after ~15-20 leads."),
-            ("Locations", "Egypt", "Presence only (people in the location). Add Gulf countries only if the client wants expats."),
+            ("Locations", ", ".join(LOCATIONS), "Presence only (people in the location). One campaign at launch; split Egypt and Gulf later once there is data."),
             ("Languages", "Arabic + English", ""),
             ("Conversion goal", "Submit lead form (account default)", "Fires on thank_you_view, once per lead."),
             ("Ad groups", len(GROUPS), "One per project and language, plus the Palm Hills October hub."),
