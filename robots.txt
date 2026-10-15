@@ -5,3 +5,4 @@ Disallow: /en/thank-you
 Disallow: /tools/
 
 Sitemap: https://viberealestatre.com/sitemap.xml
+Sitemap: https://viberealestatre.com/pages-sitemap.xml

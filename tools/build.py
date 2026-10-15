@@ -1149,28 +1149,21 @@ def write(rel, content):
 
 
 def sitemap():
+    """Plain urlset (hreflang lives in each page's <head>, so it is not repeated here).
+    Written twice: sitemap.xml and pages-sitemap.xml (a fresh name for Search Console)."""
     import datetime
     today = datetime.date.today().isoformat()
-    out = ['<?xml version="1.0" encoding="UTF-8"?>',
-           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
-    home_alts = "".join(f'<xhtml:link rel="alternate" hreflang="{h}" href="{url("", l, True)}"/>' for h, l in (("ar", "ar"), ("en", "en"), ("x-default", "ar")))
-    for l in LANGS:
-        out.append(f"  <url><loc>{url('', l, True)}</loc><lastmod>{today}</lastmod>{home_alts}</url>")
-    for slug in (HUB_SLUG, "about-us", "privacy-policy"):
-        alts = "".join(f'<xhtml:link rel="alternate" hreflang="{h}" href="{url(slug, l, True)}"/>' for h, l in (("ar", "ar"), ("en", "en"), ("x-default", "ar")))
+    slugs = [""] + [HUB_SLUG] + [s for s, p in PROJECTS.items() if p.get("ready")] + ["about-us", "privacy-policy"]
+    out = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for slug in slugs:
         for l in LANGS:
-            out.append(f"  <url><loc>{url(slug, l, True)}</loc><lastmod>{today}</lastmod>{alts}</url>")
-    for slug, p in PROJECTS.items():
-        if not p.get("ready"):
-            continue
-        for lang in LANGS:
-            alts = "".join(f'<xhtml:link rel="alternate" hreflang="{h}" href="{url(slug, l, True)}"/>'
-                           for h, l in (("ar", "ar"), ("en", "en"), ("x-default", "ar")))
-            out.append(f"  <url><loc>{url(slug, lang, True)}</loc><lastmod>{today}</lastmod>{alts}</url>")
+            out.append(f"  <url><loc>{url(slug, l, True)}</loc><lastmod>{today}</lastmod></url>")
     out.append("</urlset>")
-    write("sitemap.xml", "\n".join(out) + "\n")
-    write("robots.txt", f"User-agent: *\nAllow: /\nDisallow: /thank-you\nDisallow: /en/thank-you\nDisallow: /tools/\n\nSitemap: {SITE['domain']}/sitemap.xml\n")
-
+    xml = "\n".join(out) + "\n"
+    write("sitemap.xml", xml)
+    write("pages-sitemap.xml", xml)
+    write("robots.txt", f"User-agent: *\nAllow: /\nDisallow: /thank-you\nDisallow: /en/thank-you\nDisallow: /tools/\n\n"
+                        f"Sitemap: {SITE['domain']}/sitemap.xml\nSitemap: {SITE['domain']}/pages-sitemap.xml\n")
 
 def llms_txt():
     """/llms.txt — a plain-markdown summary of the site for AI assistants and answer engines."""
