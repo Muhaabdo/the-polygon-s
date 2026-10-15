@@ -4,10 +4,9 @@ RewriteEngine On
 RewriteRule ^(tools|data)/ - [F,L]
 RewriteRule ^assets/img/_future/ - [F,L]
 
-# Old pages (removed Oct 2026) -> new home
-RewriteRule ^palm-hills-projects-west(\.html)?/?$ /#projects [R=301,L,NE]
-RewriteRule ^palm-hills-projects-east(\.html)?/?$ /#projects [R=301,L,NE]
-RewriteRule ^hacienda-ras-al-hekma(\.html)?/?$ /#projects [R=301,L,NE]
+# Old pages (removed Oct 2026) -> closest new page
+RewriteRule ^palm-hills-projects(-west|-east)?(\.html)?/?$ /palm-hills-october [R=301,L]
+RewriteRule ^(hacienda-ras-al-hekma|north-coast-project)(\.html)?/?$ / [R=301,L]
 
 # If the request already resolves to a real file or directory, leave it alone
 # (assets, images, this file itself, etc.).

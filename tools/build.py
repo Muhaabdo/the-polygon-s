@@ -387,7 +387,8 @@ def head(title, desc, canonical, alternates, lang, t, og_img=None, robots="max-i
 <meta property="og:description" content="{esc(desc)}">
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(desc)}">
-{og}<link rel="icon" href="/assets/img/brand/favicon.svg" type="image/svg+xml">
+{og}<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/assets/img/brand/favicon.svg" type="image/svg+xml">
 <link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/fonts/almarai-700-{"ar" if lang == "ar" else "latin"}.woff2">
 {pre}<link rel="stylesheet" href="/assets/css/project.css?v={ASSET_V}">
 {ldtag}</head>
